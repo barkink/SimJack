@@ -1,0 +1,25 @@
+{
+    "num_decks": 8,
+    "round_count": 100,
+    "hit_on_soft_17": false,
+    "allow_double_after_split": false,
+    "accept_insurance": true,
+    "forced_cards": [],
+    "strategy_directory": "strategies",
+    "players": [
+      {
+        "player_id": 1,
+        "initial_balance": 1000.0,
+        "bet_unit": 10.0,
+        "max_splits": 1,
+        "strategy": "basic",
+        "owner": "PlayerOne",
+        "box_indexes": [1],
+        "sidebets": {
+          "perfect_pair": 1.0,
+          "21+3": 1.0
+        }
+      }
+    ]
+  }
+  

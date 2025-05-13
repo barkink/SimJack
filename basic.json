@@ -1,0 +1,1007 @@
+{
+  "decide_insurance": true,
+  "fallback": "stand",
+  "actions": {
+    "pair_A_vs_2": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_3": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_4": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_5": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_6": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_7": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_8": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_9": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_10": [
+      "split",
+      "hit"
+    ],
+    "pair_A_vs_A": [
+      "split",
+      "hit"
+    ],
+    "pair_10_vs_2": [
+      "stand"
+    ],
+    "pair_10_vs_3": [
+      "stand"
+    ],
+    "pair_10_vs_4": [
+      "stand"
+    ],
+    "pair_10_vs_5": [
+      "stand"
+    ],
+    "pair_10_vs_6": [
+      "stand"
+    ],
+    "pair_10_vs_7": [
+      "stand"
+    ],
+    "pair_10_vs_8": [
+      "stand"
+    ],
+    "pair_10_vs_9": [
+      "stand"
+    ],
+    "pair_10_vs_10": [
+      "stand"
+    ],
+    "pair_10_vs_A": [
+      "stand"
+    ],
+    "pair_9_vs_2": [
+      "split",
+      "stand"
+    ],
+    "pair_9_vs_3": [
+      "split",
+      "stand"
+    ],
+    "pair_9_vs_4": [
+      "split",
+      "stand"
+    ],
+    "pair_9_vs_5": [
+      "split",
+      "stand"
+    ],
+    "pair_9_vs_6": [
+      "split",
+      "stand"
+    ],
+    "pair_9_vs_7": [
+      "stand"
+    ],
+    "pair_9_vs_8": [
+      "split",
+      "stand"
+    ],
+    "pair_9_vs_9": [
+      "split",
+      "stand"
+    ],
+    "pair_9_vs_10": [
+      "stand"
+    ],
+    "pair_9_vs_A": [
+      "stand"
+    ],
+    "pair_8_vs_2": [
+      "split",
+      "stand"
+    ],
+    "pair_8_vs_3": [
+      "split",
+      "stand"
+    ],
+    "pair_8_vs_4": [
+      "split",
+      "stand"
+    ],
+    "pair_8_vs_5": [
+      "split",
+      "stand"
+    ],
+    "pair_8_vs_6": [
+      "split",
+      "stand"
+    ],
+    "pair_8_vs_7": [
+      "split",
+      "hit"
+    ],
+    "pair_8_vs_8": [
+      "split",
+      "hit"
+    ],
+    "pair_8_vs_9": [
+      "split",
+      "hit"
+    ],
+    "pair_8_vs_10": [
+      "split",
+      "hit"
+    ],
+    "pair_8_vs_A": [
+      "split",
+      "hit"
+    ],
+    "pair_7_vs_2": [
+      "split",
+      "stand"
+    ],
+    "pair_7_vs_3": [
+      "split",
+      "stand"
+    ],
+    "pair_7_vs_4": [
+      "split",
+      "stand"
+    ],
+    "pair_7_vs_5": [
+      "split",
+      "stand"
+    ],
+    "pair_7_vs_6": [
+      "split",
+      "stand"
+    ],
+    "pair_7_vs_7": [
+      "split",
+      "stand"
+    ],
+    "pair_7_vs_8": [
+      "hit"
+    ],
+    "pair_7_vs_9": [
+      "hit"
+    ],
+    "pair_7_vs_10": [
+      "hit"
+    ],
+    "pair_7_vs_A": [
+      "hit"
+    ],
+    "pair_6_vs_2": [
+      "split",
+      "hit"
+    ],
+    "pair_6_vs_3": [
+      "split",
+      "hit"
+    ],
+    "pair_6_vs_4": [
+      "split",
+      "stand"
+    ],
+    "pair_6_vs_5": [
+      "split",
+      "stand"
+    ],
+    "pair_6_vs_6": [
+      "split",
+      "stand"
+    ],
+    "pair_6_vs_7": [
+      "hit"
+    ],
+    "pair_6_vs_8": [
+      "hit"
+    ],
+    "pair_6_vs_9": [
+      "hit"
+    ],
+    "pair_6_vs_10": [
+      "hit"
+    ],
+    "pair_6_vs_A": [
+      "hit"
+    ],
+    "pair_5_vs_2": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_3": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_4": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_5": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_6": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_7": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_8": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_9": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_10": [
+      "double",
+      "hit"
+    ],
+    "pair_5_vs_A": [
+      "hit"
+    ],
+    "pair_4_vs_2": [
+      "hit"
+    ],
+    "pair_4_vs_3": [
+      "hit"
+    ],
+    "pair_4_vs_4": [
+      "split",
+      "hit"
+    ],
+    "pair_4_vs_5": [
+      "split",
+      "hit"
+    ],
+    "pair_4_vs_6": [
+      "hit"
+    ],
+    "pair_4_vs_7": [
+      "hit"
+    ],
+    "pair_4_vs_8": [
+      "hit"
+    ],
+    "pair_4_vs_9": [
+      "hit"
+    ],
+    "pair_4_vs_10": [
+      "hit"
+    ],
+    "pair_4_vs_A": [
+      "hit"
+    ],
+    "pair_3_vs_2": [
+      "split",
+      "hit"
+    ],
+    "pair_3_vs_3": [
+      "split",
+      "hit"
+    ],
+    "pair_3_vs_4": [
+      "split",
+      "hit"
+    ],
+    "pair_3_vs_5": [
+      "split",
+      "hit"
+    ],
+    "pair_3_vs_6": [
+      "split",
+      "hit"
+    ],
+    "pair_3_vs_7": [
+      "split",
+      "hit"
+    ],
+    "pair_3_vs_8": [
+      "hit"
+    ],
+    "pair_3_vs_9": [
+      "hit"
+    ],
+    "pair_3_vs_10": [
+      "hit"
+    ],
+    "pair_3_vs_A": [
+      "hit"
+    ],
+    "pair_2_vs_2": [
+      "split",
+      "hit"
+    ],
+    "pair_2_vs_3": [
+      "split",
+      "hit"
+    ],
+    "pair_2_vs_4": [
+      "split",
+      "hit"
+    ],
+    "pair_2_vs_5": [
+      "split",
+      "hit"
+    ],
+    "pair_2_vs_6": [
+      "split",
+      "hit"
+    ],
+    "pair_2_vs_7": [
+      "split",
+      "hit"
+    ],
+    "pair_2_vs_8": [
+      "hit"
+    ],
+    "pair_2_vs_9": [
+      "hit"
+    ],
+    "pair_2_vs_10": [
+      "hit"
+    ],
+    "pair_2_vs_A": [
+      "hit"
+    ],
+    "hard_16_vs_2": [
+      "stand"
+    ],
+    "hard_16_vs_3": [
+      "stand"
+    ],
+    "hard_16_vs_4": [
+      "stand"
+    ],
+    "hard_16_vs_5": [
+      "stand"
+    ],
+    "hard_16_vs_6": [
+      "stand"
+    ],
+    "hard_16_vs_7": [
+      "stand"
+    ],
+    "hard_16_vs_8": [
+      "hit"
+    ],
+    "hard_16_vs_9": [
+      "hit"
+    ],
+    "hard_16_vs_10": [
+      "hit"
+    ],
+    "hard_16_vs_A": [
+      "hit"
+    ],
+    "hard_15_vs_2": [
+      "stand"
+    ],
+    "hard_15_vs_3": [
+      "stand"
+    ],
+    "hard_15_vs_4": [
+      "stand"
+    ],
+    "hard_15_vs_5": [
+      "stand"
+    ],
+    "hard_15_vs_6": [
+      "stand"
+    ],
+    "hard_15_vs_7": [
+      "stand"
+    ],
+    "hard_15_vs_8": [
+      "hit"
+    ],
+    "hard_15_vs_9": [
+      "hit"
+    ],
+    "hard_15_vs_10": [
+      "hit"
+    ],
+    "hard_15_vs_A": [
+      "hit"
+    ],
+    "hard_14_vs_2": [
+      "stand"
+    ],
+    "hard_14_vs_3": [
+      "stand"
+    ],
+    "hard_14_vs_4": [
+      "stand"
+    ],
+    "hard_14_vs_5": [
+      "stand"
+    ],
+    "hard_14_vs_6": [
+      "stand"
+    ],
+    "hard_14_vs_7": [
+      "stand"
+    ],
+    "hard_14_vs_8": [
+      "hit"
+    ],
+    "hard_14_vs_9": [
+      "hit"
+    ],
+    "hard_14_vs_10": [
+      "hit"
+    ],
+    "hard_14_vs_A": [
+      "hit"
+    ],
+    "hard_13_vs_2": [
+      "stand"
+    ],
+    "hard_13_vs_3": [
+      "stand"
+    ],
+    "hard_13_vs_4": [
+      "stand"
+    ],
+    "hard_13_vs_5": [
+      "stand"
+    ],
+    "hard_13_vs_6": [
+      "stand"
+    ],
+    "hard_13_vs_7": [
+      "stand"
+    ],
+    "hard_13_vs_8": [
+      "hit"
+    ],
+    "hard_13_vs_9": [
+      "hit"
+    ],
+    "hard_13_vs_10": [
+      "hit"
+    ],
+    "hard_13_vs_A": [
+      "hit"
+    ],
+    "hard_12_vs_2": [
+      "hit"
+    ],
+    "hard_12_vs_3": [
+      "hit"
+    ],
+    "hard_12_vs_4": [
+      "stand"
+    ],
+    "hard_12_vs_5": [
+      "stand"
+    ],
+    "hard_12_vs_6": [
+      "stand"
+    ],
+    "hard_12_vs_7": [
+      "hit"
+    ],
+    "hard_12_vs_8": [
+      "hit"
+    ],
+    "hard_12_vs_9": [
+      "hit"
+    ],
+    "hard_12_vs_10": [
+      "hit"
+    ],
+    "hard_12_vs_A": [
+      "hit"
+    ],
+    "hard_11_vs_2": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_3": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_4": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_5": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_6": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_7": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_8": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_9": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_10": [
+      "double",
+      "hit"
+    ],
+    "hard_11_vs_A": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_2": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_3": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_4": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_5": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_6": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_7": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_8": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_9": [
+      "double",
+      "hit"
+    ],
+    "hard_10_vs_10": [
+      "hit"
+    ],
+    "hard_10_vs_A": [
+      "hit"
+    ],
+    "hard_9_vs_2": [
+      "hit"
+    ],
+    "hard_9_vs_3": [
+      "double",
+      "hit"
+    ],
+    "hard_9_vs_4": [
+      "double",
+      "hit"
+    ],
+    "hard_9_vs_5": [
+      "double",
+      "hit"
+    ],
+    "hard_9_vs_6": [
+      "double",
+      "hit"
+    ],
+    "hard_9_vs_7": [
+      "hit"
+    ],
+    "hard_9_vs_8": [
+      "hit"
+    ],
+    "hard_9_vs_9": [
+      "hit"
+    ],
+    "hard_9_vs_10": [
+      "hit"
+    ],
+    "hard_9_vs_A": [
+      "hit"
+    ],
+    "hard_8_vs_2": [
+      "hit"
+    ],
+    "hard_8_vs_3": [
+      "hit"
+    ],
+    "hard_8_vs_4": [
+      "hit"
+    ],
+    "hard_8_vs_5": [
+      "hit"
+    ],
+    "hard_8_vs_6": [
+      "hit"
+    ],
+    "hard_8_vs_7": [
+      "hit"
+    ],
+    "hard_8_vs_8": [
+      "hit"
+    ],
+    "hard_8_vs_9": [
+      "hit"
+    ],
+    "hard_8_vs_10": [
+      "hit"
+    ],
+    "hard_8_vs_A": [
+      "hit"
+    ],
+    "hard_5_vs_2": [
+      "hit"
+    ],
+    "hard_6_vs_2": [
+      "hit"
+    ],
+    "hard_7_vs_2": [
+      "hit"
+    ],
+    "hard_5_vs_3": [
+      "hit"
+    ],
+    "hard_6_vs_3": [
+      "hit"
+    ],
+    "hard_7_vs_3": [
+      "hit"
+    ],
+    "hard_5_vs_4": [
+      "hit"
+    ],
+    "hard_6_vs_4": [
+      "hit"
+    ],
+    "hard_7_vs_4": [
+      "hit"
+    ],
+    "hard_5_vs_5": [
+      "hit"
+    ],
+    "hard_6_vs_5": [
+      "hit"
+    ],
+    "hard_7_vs_5": [
+      "hit"
+    ],
+    "hard_5_vs_6": [
+      "hit"
+    ],
+    "hard_6_vs_6": [
+      "hit"
+    ],
+    "hard_7_vs_6": [
+      "hit"
+    ],
+    "hard_5_vs_7": [
+      "hit"
+    ],
+    "hard_6_vs_7": [
+      "hit"
+    ],
+    "hard_7_vs_7": [
+      "hit"
+    ],
+    "hard_5_vs_8": [
+      "hit"
+    ],
+    "hard_6_vs_8": [
+      "hit"
+    ],
+    "hard_7_vs_8": [
+      "hit"
+    ],
+    "hard_5_vs_9": [
+      "hit"
+    ],
+    "hard_6_vs_9": [
+      "hit"
+    ],
+    "hard_7_vs_9": [
+      "hit"
+    ],
+    "hard_5_vs_10": [
+      "hit"
+    ],
+    "hard_6_vs_10": [
+      "hit"
+    ],
+    "hard_7_vs_10": [
+      "hit"
+    ],
+    "hard_5_vs_A": [
+      "hit"
+    ],
+    "hard_6_vs_A": [
+      "hit"
+    ],
+    "hard_7_vs_A": [
+      "hit"
+    ],
+    "soft_10_vs_2": [
+      "stand"
+    ],
+    "soft_10_vs_3": [
+      "stand"
+    ],
+    "soft_10_vs_4": [
+      "stand"
+    ],
+    "soft_10_vs_5": [
+      "stand"
+    ],
+    "soft_10_vs_6": [
+      "stand"
+    ],
+    "soft_10_vs_7": [
+      "stand"
+    ],
+    "soft_10_vs_8": [
+      "stand"
+    ],
+    "soft_10_vs_9": [
+      "stand"
+    ],
+    "soft_10_vs_10": [
+      "stand"
+    ],
+    "soft_10_vs_A": [
+      "stand"
+    ],
+    "soft_9_vs_2": [
+      "stand"
+    ],
+    "soft_9_vs_3": [
+      "stand"
+    ],
+    "soft_9_vs_4": [
+      "stand"
+    ],
+    "soft_9_vs_5": [
+      "stand"
+    ],
+    "soft_9_vs_6": [
+      "stand"
+    ],
+    "soft_9_vs_7": [
+      "stand"
+    ],
+    "soft_9_vs_8": [
+      "stand"
+    ],
+    "soft_9_vs_9": [
+      "stand"
+    ],
+    "soft_9_vs_10": [
+      "stand"
+    ],
+    "soft_9_vs_A": [
+      "stand"
+    ],
+    "soft_8_vs_2": [
+      "stand"
+    ],
+    "soft_8_vs_3": [
+      "double",
+      "stand"
+    ],
+    "soft_8_vs_4": [
+      "double",
+      "stand"
+    ],
+    "soft_8_vs_5": [
+      "double",
+      "stand"
+    ],
+    "soft_8_vs_6": [
+      "double",
+      "stand"
+    ],
+    "soft_8_vs_7": [
+      "stand"
+    ],
+    "soft_8_vs_8": [
+      "stand"
+    ],
+    "soft_8_vs_9": [
+      "hit"
+    ],
+    "soft_8_vs_10": [
+      "hit"
+    ],
+    "soft_8_vs_A": [
+      "hit"
+    ],
+    "soft_7_vs_2": [
+      "stand"
+    ],
+    "soft_7_vs_3": [
+      "double",
+      "hit"
+    ],
+    "soft_7_vs_4": [
+      "double",
+      "hit"
+    ],
+    "soft_7_vs_5": [
+      "double",
+      "hit"
+    ],
+    "soft_7_vs_6": [
+      "double",
+      "hit"
+    ],
+    "soft_7_vs_7": [
+      "hit"
+    ],
+    "soft_7_vs_8": [
+      "hit"
+    ],
+    "soft_7_vs_9": [
+      "hit"
+    ],
+    "soft_7_vs_10": [
+      "hit"
+    ],
+    "soft_7_vs_A": [
+      "hit"
+    ],
+    "soft_6_vs_2": [
+      "hit"
+    ],
+    "soft_6_vs_3": [
+      "hit"
+    ],
+    "soft_6_vs_4": [
+      "double",
+      "hit"
+    ],
+    "soft_6_vs_5": [
+      "double",
+      "hit"
+    ],
+    "soft_6_vs_6": [
+      "double",
+      "hit"
+    ],
+    "soft_6_vs_7": [
+      "hit"
+    ],
+    "soft_6_vs_8": [
+      "hit"
+    ],
+    "soft_6_vs_9": [
+      "hit"
+    ],
+    "soft_6_vs_10": [
+      "hit"
+    ],
+    "soft_6_vs_A": [
+      "hit"
+    ],
+    "soft_5_vs_2": [
+      "hit"
+    ],
+    "soft_5_vs_3": [
+      "hit"
+    ],
+    "soft_5_vs_4": [
+      "double",
+      "hit"
+    ],
+    "soft_5_vs_5": [
+      "double",
+      "hit"
+    ],
+    "soft_5_vs_6": [
+      "double",
+      "hit"
+    ],
+    "soft_5_vs_7": [
+      "hit"
+    ],
+    "soft_5_vs_8": [
+      "hit"
+    ],
+    "soft_5_vs_9": [
+      "hit"
+    ],
+    "soft_5_vs_10": [
+      "hit"
+    ],
+    "soft_5_vs_A": [
+      "hit"
+    ],
+    "soft_4_vs_2": [
+      "hit"
+    ],
+    "soft_4_vs_3": [
+      "hit"
+    ],
+    "soft_4_vs_4": [
+      "hit"
+    ],
+    "soft_4_vs_5": [
+      "double",
+      "hit"
+    ],
+    "soft_4_vs_6": [
+      "double",
+      "hit"
+    ],
+    "soft_4_vs_7": [
+      "hit"
+    ],
+    "soft_4_vs_8": [
+      "hit"
+    ],
+    "soft_4_vs_9": [
+      "hit"
+    ],
+    "soft_4_vs_10": [
+      "hit"
+    ],
+    "soft_4_vs_A": [
+      "hit"
+    ],
+    "soft_3_vs_2": [
+      "hit"
+    ],
+    "soft_3_vs_3": [
+      "hit"
+    ],
+    "soft_3_vs_4": [
+      "hit"
+    ],
+    "soft_3_vs_5": [
+      "double",
+      "hit"
+    ],
+    "soft_3_vs_6": [
+      "double",
+      "hit"
+    ],
+    "soft_3_vs_7": [
+      "hit"
+    ],
+    "soft_3_vs_8": [
+      "hit"
+    ],
+    "soft_3_vs_9": [
+      "hit"
+    ],
+    "soft_3_vs_10": [
+      "hit"
+    ],
+    "soft_3_vs_A": [
+      "hit"
+    ]
+  }
+}
