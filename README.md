@@ -10,7 +10,11 @@
 
 - ♠️ Full blackjack game engine (7-box table, dealer AI, split/double support)
 - 🧠 Strategy files loaded dynamically via JSON (no recompile!)
+- 🧠 Custom strategy support (basic & card counting)
+- 📈 Deviation rules based on true count
+- 🎯 Bet ramping with true count multipliers
 - 💼 Supports perfect pair & 21+3 sidebets
+- 📦 JSON-configurable players, rules, and simulations
 - 📊 Outputs a rich, Pandas-ready CSV log file
 - ⚡ Handles millions of hands efficiently with buffered logging
 - 🧪 Supports forced cards, custom config per player
@@ -18,15 +22,12 @@
 
 ---
 
-## 📦 Project Structure
+## 🚀 Getting Started
 
-```
-simjack/
-├── main.go              # CLI entry point
-├── config/              # Config schema
-├── engine/              # Game logic (Dealer, Player, Box, Hand, Strategy, Logger...)
-├── strategies/          # Strategy definitions (e.g. basic_chart.json)
-├── test_config.json     # Sample config to run out-of-the-box
+```bash
+git clone https://github.com/barkink/SimJack.git
+cd SimJack
+go run main.go -config=test_config.json -log=simjack_log.csv -strategies=strategies/
 ```
 
 ---
@@ -57,6 +58,17 @@ With inline JSON:
 
 ```bash
 ./simjack -help
+```
+---
+## 📦 Project Structure
+
+```
+simjack/
+├── main.go              # CLI entry point
+├── config/              # Config schema
+├── engine/              # Game logic (Dealer, Player, Box, Hand, Strategy, Logger...)
+├── strategies/          # Strategy definitions (e.g. basic_chart.json) Could be another directory, given as a parameter.
+├── test_config.json     # Sample config to run out-of-the-box
 ```
 
 ---
@@ -112,6 +124,65 @@ Config allows:
 - Forced cards for debugging
 
 See `test_config.json` for a working example.
+
+---
+
+---
+
+## 🔧 Sample Config (test_config.json)
+
+```json
+{
+  "num_decks": 6,
+  "round_count": 1000,
+  "strategy_directory": "strategies",
+  "players": [
+    {
+      "player_id": 1,
+      "strategy": "hi_lo",
+      "bet_unit": 10,
+      "box_indexes": [1, 2]
+    }
+  ]
+}
+```
+
+---
+
+## 📚 Strategy Sample (hi_lo.json)
+
+```json
+{
+  "fallback": "stand",
+  "counting_enabled": true,
+  "actions": {
+    "hard_16_vs_10": ["hit"]
+  },
+  "deviations": {
+    "hard_16_vs_10": { "at_count": 4, "action": "stand" }
+  },
+  "bet_ramp": [
+    { "min_count": -4, "bet_unit": 0.5 },
+    { "min_count": 1,  "bet_unit": 2.0 },
+    { "min_count": 3,  "bet_unit": 4.0 }
+  ]
+}
+```
+
+---
+
+## 📊 Output Log
+
+The simulator produces a CSV log file containing:
+- 📌 strategy_key and full decision_trace per hand
+- 🧠 indicators like (deviation), (fallback)
+- 💵 bet_unit vs. bet_unit_used for ramp-up tracking
+- 📈 full financials (balance, payout, sidebets, insurance)
+
+Example log row:
+```
+..., hard_16_vs_10:stand (deviation), 10.00, 40.00
+```
 
 ---
 
