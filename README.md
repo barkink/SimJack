@@ -152,9 +152,6 @@ See `test_config.json` for a working example.
   ]
 }
 ```
-
----
-
 ## 📚 Strategy Sample (hi_lo.json)
 
 ```json
