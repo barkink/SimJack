@@ -31,7 +31,7 @@ func NewLogger(path string) (*Logger, error) {
 	w := csv.NewWriter(f)
 	w.Write([]string{
 		"round", "shoe", "deck_running_count", "true_count", "real_count_till_cut_card", "box_id", "player_id", "hand_id", "owner", "hand", "result",
-		"bet", "hand_payout", "main_payout", "pp_bet", "pp_win", "pp_type",
+		"bet_from_config", "bet_unit_used", "hand_payout", "main_payout", "pp_bet", "pp_win", "pp_type",
 		"p21_bet", "p21_win", "p21_type", "insurance_bet", "insurance_payout",
 		"initial_balance", "round_start_balance", "player_balance",
 		"is_blackjack", "is_doubled", "is_split_child", "split_count",
@@ -107,6 +107,7 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			hand.String(),
 			hand.Result,
 			fmt.Sprintf("%.2f", hand.BetAmount),
+			fmt.Sprintf("%.2f", box.Player.BetUnitUsed),
 			fmt.Sprintf("%.2f", hand.Payout),
 			fmt.Sprintf("%.2f", box.TotalPayout),
 			fmt.Sprintf("%.2f", box.PerfectPairBet),

@@ -12,14 +12,27 @@
       {
         "player_id": 1,
         "initial_balance": 10000.0,
-        "target_balance":"",
+        "target_balance": 0.0,
         "bet_unit": 10.0,
-        "strategy": "basic",
+        "strategy": "hi-lo",
         "owner": "PlayerOne",
-        "box_indexes": [1],
+        "box_indexes": [1, 2],
         "sidebets": {
           "perfect_pair": 1.0,
           "21+3": 1.0
+        }
+      },
+      {
+        "player_id": 2,
+        "owner": "PlayerTwo",
+        "initial_balance": 8000.0,
+        "target_balance": 0.0,
+        "bet_unit": 5.0,
+        "strategy": "basic",
+        "box_indexes": [3, 4, 5],
+        "sidebets": {
+          "perfect_pair": 0.0,
+          "21+3": 0.0
         }
       }
     ]

@@ -62,14 +62,14 @@ func (s *CountingStrategy) GetAction(hand *Hand, dealerUp Card) string {
 	if dev, ok := s.Deviations[key]; ok && s.Deck != nil && s.Deck.GetRunningCount() >= dev.AtCount {
 		hand.DecisionTrace = append(hand.DecisionTrace, DecisionLogEntry{
 			Key:    key,
-			Action: dev.Action,
+			Action: dev.Action + " (deviation)",
 		})
 		return dev.Action
 	}
 	action := s.BaseStrategy.GetAction(hand, dealerUp)
 	// base strategy key mevcut mi kontrol edelim
 	_, has := s.BaseStrategy.Actions[key]
-	suffix := ""
+	suffix := " (main)"
 	if !has {
 		suffix = " (fallback)"
 	}
