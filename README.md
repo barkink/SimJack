@@ -133,8 +133,6 @@ See `test_config.json` for a working example.
 
 ---
 
----
-
 ## 🔧 Sample Config (test_config.json)
 
 ```json
