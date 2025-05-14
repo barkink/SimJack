@@ -1,6 +1,12 @@
 # SimJack
 
+![Go](https://img.shields.io/badge/Go-1.20+-blue)
+![License](https://img.shields.io/github/license/barkink/SimJack)
+![Platform](https://img.shields.io/badge/platform-cli-lightgrey)
+
 🎲 **SimJack** is a high-performance, fully customizable blackjack simulation engine written in Go.
+
+It supports card counting, dynamic bet ramping, sidebets (Perfect Pair, 21+3), and custom strategy files in JSON format — perfect for strategy testing or statistical analysis.
 
 > "Where strategy meets simulation."
 
