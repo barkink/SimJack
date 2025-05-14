@@ -11,32 +11,43 @@ func registerBox(box *Box) {
 	boxRegistry[box.ID] = box
 }
 
-type Hand struct {
-	Cards        []Card
-	IsDoubled    bool
-	IsSplitChild bool
-	BetAmount    float64
-	Result       string
-	BoxID        int
-	Payout       float64
+type DecisionLogEntry struct {
+	Key    string
+	Action string
 }
 
-func NewHand(bet float64, boxID int) *Hand {
+type Hand struct {
+	Cards         []Card
+	IsDoubled     bool
+	IsSplitChild  bool
+	BetAmount     float64
+	Result        string
+	BoxID         int
+	Payout        float64
+	ID            int
+	DecisionTrace []DecisionLogEntry
+}
+
+func NewHand(bet float64, boxID int, id int) *Hand {
 	return &Hand{
-		Cards:     []Card{},
-		BetAmount: bet,
-		BoxID:     boxID,
-		Payout:    0,
+		ID:            id,
+		Cards:         []Card{},
+		BetAmount:     bet,
+		BoxID:         boxID,
+		Payout:        0,
+		DecisionTrace: []DecisionLogEntry{},
 	}
 }
 
-func NewSplitHand(from *Hand) *Hand {
+func NewSplitHand(from *Hand, id int) *Hand {
 	return &Hand{
-		Cards:        []Card{},
-		BetAmount:    from.BetAmount,
-		IsSplitChild: true,
-		BoxID:        from.BoxID,
-		Payout:       0,
+		ID:            id,
+		Cards:         []Card{},
+		BetAmount:     from.BetAmount,
+		IsSplitChild:  true,
+		BoxID:         from.BoxID,
+		Payout:        0,
+		DecisionTrace: append([]DecisionLogEntry{}, from.DecisionTrace...),
 	}
 }
 

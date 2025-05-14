@@ -16,9 +16,9 @@ type Engine struct {
 	CurrentShoeNumber   int
 	HitOnSoft17         bool
 	AllowDAS            bool
-	TrackScenario       string
 	DealerTakesHoleCard bool
 	Logger              *Logger
+	MaxSplits           int
 }
 
 func NewEngine(cfg config.SimulationConfig, logger *Logger) *Engine {
@@ -33,6 +33,11 @@ func NewEngine(cfg config.SimulationConfig, logger *Logger) *Engine {
 			fmt.Printf("Failed to load strategy: %v\n", err)
 			os.Exit(1)
 		}
+
+		if cs, ok := strategy.(*CountingStrategy); ok && cs.CountingEnabled {
+			cs.Deck = deck
+		}
+
 		p := NewPlayer(pc, strategy)
 
 		p.Boxes = []*Box{}
@@ -61,11 +66,11 @@ func NewEngine(cfg config.SimulationConfig, logger *Logger) *Engine {
 		RoundCount:          cfg.RoundCount,
 		HitOnSoft17:         cfg.HitOnSoft17,
 		AllowDAS:            cfg.AllowDoubleAfterSplit,
-		TrackScenario:       cfg.TrackScenario,
 		DealerTakesHoleCard: cfg.DealerTakesHoleCard,
 		CurrentRound:        1,
 		CurrentShoeNumber:   1,
 		Logger:              logger,
+		MaxSplits:           cfg.MaxSplits,
 	}
 }
 
@@ -104,7 +109,11 @@ func (e *Engine) PlayRound() {
 		p.ResetRound()
 		box.Reset()
 
-		if !p.PlaceBet(p.BetUnit) {
+		if cs, ok := p.Strategy.(*CountingStrategy); ok {
+			p.BetUnitUsed = cs.GetBetUnit(p.BetUnit)
+		}
+		if !p.PlaceMainBet() {
+			//if !p.PlaceBet(p.BetUnit) {
 			p.IsBusted = true
 			continue
 		}
@@ -121,7 +130,7 @@ func (e *Engine) PlayRound() {
 			}
 		}
 
-		hand := NewHand(p.BetUnit, box.ID)
+		hand := NewHand(p.BetUnit, box.ID, box.nextHandID)
 		box.AddHand(hand)
 	}
 
@@ -352,22 +361,29 @@ func (e *Engine) executeBoxActions() {
 		i := 0
 		for i < len(box.Hands) {
 			hand := box.Hands[i]
+			if hand.IsSplitChild && hand.Cards[0].Rank == "A" && len(hand.Cards) == 2 && hand.Cards[1].Rank != "A" {
+				i++
+				continue
+			}
+
 			action := p.Strategy.GetAction(hand, e.Dealer.Hand.Cards[0])
 
-			if action == "split" && hand.CanSplit() && len(box.Hands) < p.MaxSplits+1 {
+			if action == "split" && hand.CanSplit() && len(box.Hands) < e.MaxSplits+1 {
 				if p.PlaceBet(p.BetUnit) {
 					c1 := hand.Cards[0]
 					c2 := hand.Cards[1]
 
-					h1 := NewSplitHand(hand)
+					h1 := NewSplitHand(hand, box.nextHandID)
 					h1.AddCard(c1)
 					card1, _ := e.Deck.DealCard()
 					h1.AddCard(card1)
+					box.nextHandID++
 
-					h2 := NewSplitHand(hand)
+					h2 := NewSplitHand(hand, box.nextHandID)
 					h2.AddCard(c2)
 					card2, _ := e.Deck.DealCard()
 					h2.AddCard(card2)
+					box.nextHandID++
 
 					h1.IsSplitChild = true
 					h2.IsSplitChild = true
@@ -382,7 +398,9 @@ func (e *Engine) executeBoxActions() {
 			}
 
 			if action == "double" {
-				if p.PlaceBet(hand.BetAmount) {
+				if hand.IsSplitChild && !e.AllowDAS {
+					action = p.Strategy.FallbackAction("double")
+				} else if p.PlaceBet(hand.BetAmount) {
 					hand.MarkAsDoubled()
 					card, _ := e.Deck.DealCard()
 					hand.AddCard(card)

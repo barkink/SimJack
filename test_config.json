@@ -1,17 +1,19 @@
 {
     "num_decks": 8,
-    "round_count": 100,
+    "round_count": 1000,
     "hit_on_soft_17": false,
     "allow_double_after_split": false,
     "accept_insurance": true,
+    "dealer_takes_hole_card": true,
     "forced_cards": [],
     "strategy_directory": "strategies",
+    "max_splits": 1,
     "players": [
       {
         "player_id": 1,
-        "initial_balance": 1000.0,
+        "initial_balance": 10000.0,
+        "target_balance":"",
         "bet_unit": 10.0,
-        "max_splits": 1,
         "strategy": "basic",
         "owner": "PlayerOne",
         "box_indexes": [1],

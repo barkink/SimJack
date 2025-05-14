@@ -13,6 +13,7 @@ type Box struct {
 	P21Type         string
 	TotalPayout     float64
 	SplitCount      int
+	nextHandID      int
 }
 
 func NewBox(id int, player *Player) *Box {
@@ -25,6 +26,7 @@ func NewBox(id int, player *Player) *Box {
 		PerfectPairType: "none",
 		P21Type:         "none",
 		Hands:           []*Hand{},
+		nextHandID:      1,
 	}
 	registerBox(box)
 	return box
@@ -42,4 +44,5 @@ func (b *Box) Reset() {
 	b.P21Type = "none"
 	b.TotalPayout = 0
 	b.SplitCount = 0
+	b.nextHandID = 1
 }

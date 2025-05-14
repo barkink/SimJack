@@ -3,7 +3,7 @@ package engine
 import (
 	"fmt"
 	"math/rand"
-	"time"
+	"strings"
 )
 
 type Card struct {
@@ -32,13 +32,15 @@ var Suits = []string{"Hearts", "Diamonds", "Clubs", "Spades"}
 var Ranks = []string{"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"}
 
 type Deck struct {
-	Cards           []Card
-	DrawnThisRound  int
-	DrawnThisShoe   int
-	CutCardPosition int
-	NeedsNewDeck    bool
-	NumDecks        int
-	ForcedCards     []Card
+	Cards                []Card
+	DrawnThisRound       int
+	DrawnThisShoe        int
+	CutCardPosition      int
+	NeedsNewDeck         bool
+	NumDecks             int
+	ForcedCards          []Card
+	RunningCount         int
+	RealCountTillCutCard int
 }
 
 func NewDeck(numDecks int, forced []Card) *Deck {
@@ -60,7 +62,6 @@ func (d *Deck) SetupShoe() {
 		}
 	}
 
-	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(full), func(i, j int) {
 		full[i], full[j] = full[j], full[i]
 	})
@@ -113,6 +114,12 @@ func (d *Deck) SetupShoe() {
 	d.CutCardPosition = rand.Intn(maxCut-minCut) + minCut
 	d.NeedsNewDeck = false
 	d.DrawnThisShoe = 0
+	d.RunningCount = 0
+
+	d.RealCountTillCutCard = 0
+	for i := 0; i < d.CutCardPosition; i++ {
+		d.adjustRealCountTillCutCard(d.Cards[i])
+	}
 }
 
 func (d *Deck) DealCard() (Card, error) {
@@ -126,6 +133,8 @@ func (d *Deck) DealCard() (Card, error) {
 	}
 	c := d.Cards[0]
 	d.Cards = d.Cards[1:]
+	d.adjustRunningCount(c)
+	d.adjustRealCountTillCutCard(c)
 	return c, nil
 }
 
@@ -151,4 +160,27 @@ func ParseForcedCards(raw []string) []Card {
 		}
 	}
 	return cards
+}
+
+func getHiLoValue(c Card) int {
+	switch strings.ToUpper(c.Rank) {
+	case "2", "3", "4", "5", "6":
+		return 1
+	case "10", "J", "Q", "K", "A":
+		return -1
+	default:
+		return 0
+	}
+}
+
+func (d *Deck) adjustRunningCount(c Card) {
+	d.RunningCount += getHiLoValue(c)
+}
+
+func (d *Deck) adjustRealCountTillCutCard(c Card) {
+	d.RealCountTillCutCard += getHiLoValue(c)
+}
+
+func (d *Deck) GetRunningCount() int {
+	return d.RunningCount
 }

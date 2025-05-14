@@ -8,6 +8,7 @@ type Player struct {
 	Balance         float64
 	InitialBalance  float64
 	BetUnit         float64
+	BetUnitUsed     float64
 	MaxSplits       int
 	TargetBalance   float64
 	IsBusted        bool
@@ -31,7 +32,6 @@ func NewPlayer(cfg config.PlayerConfig, strategy Strategy) *Player {
 		Balance:         cfg.InitialBalance,
 		InitialBalance:  cfg.InitialBalance,
 		BetUnit:         cfg.BetUnit,
-		MaxSplits:       cfg.MaxSplits,
 		TargetBalance:   cfg.TargetBalance,
 		Strategy:        strategy,
 		Sidebets:        cfg.Sidebets,
@@ -41,6 +41,10 @@ func NewPlayer(cfg config.PlayerConfig, strategy Strategy) *Player {
 
 func (p *Player) CanBet(amount float64) bool {
 	return p.Balance >= amount
+}
+
+func (p *Player) PlaceMainBet() bool {
+	return p.PlaceBet(p.BetUnitUsed)
 }
 
 func (p *Player) PlaceBet(amount float64) bool {
@@ -65,6 +69,7 @@ func (p *Player) ResetRound() {
 	p.InsuranceBet = 0
 	p.InsuranceResult = "none"
 	p.InsurancePayout = 0
+	p.BetUnitUsed = p.BetUnit
 }
 
 func (p *Player) CheckStatus() {

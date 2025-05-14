@@ -9,15 +9,14 @@ type SimulationConfig struct {
 	ForcedCards           []string       `json:"forced_cards"`
 	StrategyDirectory     string         `json:"strategy_directory"`
 	Players               []PlayerConfig `json:"players"`
-	TrackScenario         string         `json:"track_scenario"`
 	DealerTakesHoleCard   bool           `json:"dealer_takes_hole_card"`
+	MaxSplits             int            `json:"max_splits"`
 }
 
 type PlayerConfig struct {
 	PlayerID       int                `json:"player_id"`
 	InitialBalance float64            `json:"initial_balance"`
 	BetUnit        float64            `json:"bet_unit"`
-	MaxSplits      int                `json:"max_splits"`
 	Strategy       string             `json:"strategy"`
 	Owner          string             `json:"owner"`
 	TargetBalance  float64            `json:"target_balance"`
