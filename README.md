@@ -51,7 +51,7 @@ go build -o simjack main.go
 With config file:
 
 ```bash
-./simjack -config=test_config.json -log=results.csv -strategies=strategies/
+./simjack -config=test_config.json -log=results.csv -strategies=strategies
 ```
 
 With inline JSON:
