@@ -248,6 +248,60 @@ round, shoe, deck_running_count, true_count, real_count_till_cut_card, box_id, p
 .
 .
 ```
+---
+
+## 📊 Log Output Columns Explained
+
+Below is an overview of the key columns in SimJack's CSV output:
+
+| Column                     | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `round`                    | Round number                                   |
+| `shoe`                     | Shoe number (reshuffle counter)                |
+| `deck_running_count`       | Running count for the shoe                     |
+| `true_count`               | True count (running count ÷ remaining decks)   |
+| `real_count_till_cut_card` | Hands until cut card is reached                |
+| `box_id`                   | Table box index                                |
+| `player_id`                | Unique player identifier                       |
+| `hand_id`                  | Unique hand identifier                         |
+| `owner`                    | Player name or label                           |
+| `hand`                     | All cards in the hand, semicolon-separated     |
+| `result`                   | Outcome: win, lose, push, blackjack            |
+| `bet_from_config`          | Initial bet unit from config                   |
+| `bet_unit_used`            | Adjusted bet (after ramping or deviations)     |
+| `hand_payout`              | Total hand payout (may include sidebets)       |
+| `main_payout`              | Main bet-only payout                           |
+| `pp_bet`                   | Perfect Pair bet amount                        |
+| `pp_win`                   | Perfect Pair win amount                        |
+| `pp_type`                  | Perfect Pair result type (e.g., Mixed, Suited) |
+| `p21_bet`                  | 21+3 sidebet amount                            |
+| `p21_win`                  | 21+3 win amount                                |
+| `p21_type`                 | 21+3 hand result category                      |
+| `insurance_bet`            | Insurance bet amount                           |
+| `insurance_payout`         | Insurance win amount                           |
+| `initial_balance`          | Starting balance at simulation begin           |
+| `round_start_balance`      | Player balance at start of current round       |
+| `player_balance`           | Player balance after round result              |
+| `is_blackjack`             | Whether the player hand was a blackjack        |
+| `is_doubled`               | Whether the hand was doubled                   |
+| `is_split_child`           | Whether this hand was from a split             |
+| `split_count`              | Total splits performed so far                  |
+| `dealer_upcard`            | Dealer's first visible card                    |
+| `dealer_final_hand`        | Dealer's full hand                             |
+| `dealer_blackjack`         | Did dealer have a blackjack?                   |
+| `dealer_bust`              | Did dealer bust?                               |
+| `player_bust`              | Did player bust?                               |
+| `player_draws`             | Cards drawn after the first two                |
+| `player_is_bankrupt`       | Player cannot place another minimum bet        |
+| `player_is_retired`        | Player reached target balance                  |
+| `num_decks`                | Number of decks used in shoe                   |
+| `cut_card_position`        | Cut card index in deck                         |
+| `cards_drawn_total`        | Cumulative cards drawn in current shoe         |
+| `cards_drawn_round`        | Cards drawn in this round only                 |
+| `cards_left_after_round`   | Cards left in shoe after round ends            |
+| `strategy_key`             | Decision trace applied to this hand            |
+
+These fields allow for detailed financial, strategic, and statistical analysis across any simulation run.
 
 ---
 
