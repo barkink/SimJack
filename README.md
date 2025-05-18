@@ -33,7 +33,7 @@ It supports card counting, dynamic bet ramping, sidebets (Perfect Pair, 21+3), a
 ```bash
 git clone https://github.com/barkink/SimJack.git
 cd SimJack
-go run main.go -config=test_config.json -log=simjack_log.csv -strategies=strategies/
+go run main.go -config=test_config.json -log=simjack_log.csv -strategies=strategies
 ```
 
 ---
