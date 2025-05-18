@@ -258,12 +258,12 @@ Below is an overview of the key columns in SimJack's CSV output:
 | -------------------------- | ---------------------------------------------- |
 | `round`                    | Round number                                   |
 | `shoe`                     | Shoe number (reshuffle counter)                |
-| `deck_running_count`       | Running count for the shoe                     |
+| `deck_running_count`       | Running count for the shoe for the player      |
 | `true_count`               | True count (running count ÷ remaining decks)   |
-| `real_count_till_cut_card` | Hands until cut card is reached                |
+| `real_count_till_cut_card` | Actual Count until cut card is reached         |
 | `box_id`                   | Table box index                                |
 | `player_id`                | Unique player identifier                       |
-| `hand_id`                  | Unique hand identifier                         |
+| `hand_id`                  | Hand identifier for that box                   |
 | `owner`                    | Player name or label                           |
 | `hand`                     | All cards in the hand, semicolon-separated     |
 | `result`                   | Outcome: win, lose, push, blackjack            |
