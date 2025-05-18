@@ -25,6 +25,8 @@ It supports card counting, dynamic bet ramping, sidebets (Perfect Pair, 21+3), a
 - ⚡ Handles millions of hands efficiently with buffered logging
 - 🧪 Supports forced cards, custom config per player
 - ✅ CLI-ready & API-compatible design
+- 🗜 Optional gzip log support (outputs as `.csv.gz`)
+- 📊 Optional progress bar in the console (enabled with `-progress` flag)
 
 ---
 
@@ -35,7 +37,10 @@ git clone https://github.com/barkink/SimJack.git
 cd SimJack
 go run main.go -config=test_config.json -log=simjack_log.csv -strategies=strategies
 ```
+### 🔧 Optional Parameters
 
+- `-progress` : Displays a progress bar in the console during simulation  
+- `gzip_log`  : If set to `true` in the config file, log output will be written as a `.csv.gz` file
 ---
 
 ## ⚙️ Usage
