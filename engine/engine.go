@@ -463,5 +463,6 @@ func (e *Engine) handleRoundEnd() {
 		if e.Logger != nil {
 			e.Logger.LogRound(e.CurrentRound, e.CurrentShoeNumber, box, e.Deck, e.Dealer)
 		}
+		box.Reset()
 	}
 }

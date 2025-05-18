@@ -44,7 +44,7 @@ func NewLogger(path string) (*Logger, error) {
 		file: f, writer: w,
 		tempPath:   tempPath,
 		finalPath:  finalPath,
-		flushEvery: 100000, // her 1000 kayıtta flush
+		flushEvery: 1000, // her 1000 kayıtta flush
 		counter:    0,
 	}, nil
 }
@@ -131,8 +131,8 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			dealerBust,
 			boolToStr(hand.CalculateValue() > 21),
 			draws,
-			boolToStr(p.Balance < p.BetUnit),
-			boolToStr(p.TargetBalance > 0 && p.Balance >= p.TargetBalance),
+			boolToStr(p.IsBusted),
+			boolToStr(p.IsRetired),
 			strconv.Itoa(deck.NumDecks),
 			strconv.Itoa(deck.CutCardPosition),
 			strconv.Itoa(deck.DrawnThisShoe),

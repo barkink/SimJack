@@ -37,6 +37,11 @@ func (b *Box) AddHand(h *Hand) {
 }
 
 func (b *Box) Reset() {
+	if b.Player != nil && b.Player.IsBusted {
+		b.Player = nil
+		b.Hands = nil
+		return // Elenmiş oyuncunun Box'ı tamamen sıfırlanır
+	}
 	b.Hands = []*Hand{}
 	b.PerfectPairWin = 0
 	b.PerfectPairType = "none"
