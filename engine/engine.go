@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"simjack/config"
+	"strings" 
 )
 
 type Engine struct {
@@ -19,9 +20,11 @@ type Engine struct {
 	DealerTakesHoleCard bool
 	Logger              *Logger
 	MaxSplits           int
+	ShowProgress bool
+	lastPercent  int
 }
 
-func NewEngine(cfg config.SimulationConfig, logger *Logger) *Engine {
+func NewEngine(cfg config.SimulationConfig, logger *Logger, showProgress bool) *Engine {
 	players := []*Player{}
 	boxes := make([]*Box, 7)
 	deck := NewDeck(cfg.NumDecks, ParseForcedCards(cfg.ForcedCards))
@@ -71,6 +74,8 @@ func NewEngine(cfg config.SimulationConfig, logger *Logger) *Engine {
 		CurrentShoeNumber:   1,
 		Logger:              logger,
 		MaxSplits:           cfg.MaxSplits,
+		ShowProgress:        showProgress,
+		lastPercent:         -1,
 	}
 }
 
@@ -92,6 +97,21 @@ func (e *Engine) Run() {
 
 		if e.Deck.ShuffleIfNeeded() {
 			e.CurrentShoeNumber++
+		}
+
+		if e.ShowProgress {
+			percent := e.CurrentRound * 100 / e.RoundCount
+			if percent != e.lastPercent {
+				e.lastPercent = percent
+				barLength := 20
+				filled := percent * barLength / 100
+				empty := barLength - filled
+				bar := "[" + strings.Repeat("█", filled) + strings.Repeat(" ", empty) + "]"
+				fmt.Printf("\r%s %3d%%", bar, percent)
+				if percent == 100 {
+					fmt.Println()
+				}
+			}
 		}
 	}
 }
@@ -463,5 +483,6 @@ func (e *Engine) handleRoundEnd() {
 		if e.Logger != nil {
 			e.Logger.LogRound(e.CurrentRound, e.CurrentShoeNumber, box, e.Deck, e.Dealer)
 		}
+		box.Reset()
 	}
 }

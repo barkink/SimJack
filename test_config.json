@@ -1,17 +1,18 @@
 {
     "num_decks": 8,
-    "round_count": 1000,
+    "round_count": 10000000,
     "hit_on_soft_17": false,
     "allow_double_after_split": false,
     "accept_insurance": true,
     "dealer_takes_hole_card": true,
     "forced_cards": [],
     "strategy_directory": "strategies",
+    "gzip_log": true,
     "max_splits": 1,
     "players": [
       {
         "player_id": 1,
-        "initial_balance": 10000.0,
+        "initial_balance": 1000000.0,
         "target_balance": 0.0,
         "bet_unit": 10.0,
         "strategy": "hi-lo",
@@ -25,7 +26,7 @@
       {
         "player_id": 2,
         "owner": "PlayerTwo",
-        "initial_balance": 8000.0,
+        "initial_balance": 800000.0,
         "target_balance": 0.0,
         "bet_unit": 5.0,
         "strategy": "basic",

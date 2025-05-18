@@ -11,6 +11,7 @@ type SimulationConfig struct {
 	Players               []PlayerConfig `json:"players"`
 	DealerTakesHoleCard   bool           `json:"dealer_takes_hole_card"`
 	MaxSplits             int            `json:"max_splits"`
+	GzipEnabled           bool           `json:"gzip_log"`
 }
 
 type PlayerConfig struct {

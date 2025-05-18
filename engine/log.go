@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"compress/gzip"
 	"encoding/csv"
 	"fmt"
 	"os"
@@ -12,23 +13,40 @@ import (
 type Logger struct {
 	file       *os.File
 	writer     *csv.Writer
+	gzipWriter *gzip.Writer
 	finalPath  string
 	tempPath   string
 	flushEvery int
 	counter    int
+	gzipEnabled bool
 }
 
-func NewLogger(path string) (*Logger, error) {
+func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
 	ext := filepath.Ext(path)
 	base := strings.TrimSuffix(path, ext)
 	tempPath := base + "_0" + ext
 	finalPath := base + "_1" + ext
 
+	if gzipEnabled {
+		tempPath += ".gz"
+		finalPath += ".gz"
+	}
+
 	f, err := os.Create(tempPath)
 	if err != nil {
 		return nil, err
 	}
-	w := csv.NewWriter(f)
+
+	var w *csv.Writer
+	var gw *gzip.Writer
+
+	if gzipEnabled {
+		gw = gzip.NewWriter(f)
+		w = csv.NewWriter(gw)
+	} else {
+		w = csv.NewWriter(f)
+	}
+
 	w.Write([]string{
 		"round", "shoe", "deck_running_count", "true_count", "real_count_till_cut_card", "box_id", "player_id", "hand_id", "owner", "hand", "result",
 		"bet_from_config", "bet_unit_used", "hand_payout", "main_payout", "pp_bet", "pp_win", "pp_type",
@@ -40,12 +58,16 @@ func NewLogger(path string) (*Logger, error) {
 		"num_decks", "cut_card_position", "cards_drawn_total", "cards_drawn_round", "cards_left_after_round", "strategy_key",
 	})
 	w.Flush()
+
 	return &Logger{
-		file: f, writer: w,
+		file:       f,
+		writer:     w,
+		gzipWriter: gw,
 		tempPath:   tempPath,
 		finalPath:  finalPath,
-		flushEvery: 100000, // her 1000 kayıtta flush
+		flushEvery: 10000,
 		counter:    0,
+		gzipEnabled:    gzipEnabled,
 	}, nil
 }
 
@@ -131,8 +153,8 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			dealerBust,
 			boolToStr(hand.CalculateValue() > 21),
 			draws,
-			boolToStr(p.Balance < p.BetUnit),
-			boolToStr(p.TargetBalance > 0 && p.Balance >= p.TargetBalance),
+			boolToStr(p.IsBusted),
+			boolToStr(p.IsRetired),
 			strconv.Itoa(deck.NumDecks),
 			strconv.Itoa(deck.CutCardPosition),
 			strconv.Itoa(deck.DrawnThisShoe),
@@ -150,6 +172,9 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 
 func (l *Logger) Close() {
 	l.writer.Flush()
+	if l.gzipEnabled && l.gzipWriter != nil {
+		l.gzipWriter.Close()
+	}
 	l.file.Close()
 	os.Rename(l.tempPath, l.finalPath)
 }

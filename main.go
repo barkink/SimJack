@@ -15,6 +15,7 @@ func main() {
 	configJSON := flag.String("config_json", "", "Inline JSON for simulation config")
 	logPath := flag.String("log", "output.csv", "Path to log output CSV file (default: output.csv)")
 	strategyDir := flag.String("strategies", "strategies", "Directory containing strategy JSON files (default: ./strategies)")
+	showProgress := flag.Bool("progress", false, "Show progress bar during simulation")
 	help := flag.Bool("help", false, "Show usage")
 	flag.Parse()
 
@@ -61,7 +62,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger, err := engine.NewLogger(*logPath)
+	logger, err := engine.NewLogger(*logPath, cfg.GzipEnabled)
 	if err != nil {
 		fmt.Printf("Failed to create log file: %v\n\n", err)
 		printUsage()
@@ -69,10 +70,10 @@ func main() {
 	}
 	defer logger.Close()
 
-	eng := engine.NewEngine(cfg, logger)
+	eng := engine.NewEngine(cfg, logger, *showProgress)
 	eng.Run()
 
-	fmt.Println("Simulation completed. Log written to", *logPath)
+	fmt.Println("\nSimulation completed. Log written to", *logPath)
 }
 
 func printUsage() {
@@ -82,6 +83,7 @@ func printUsage() {
 	fmt.Println("  -config_json string   Inline JSON config instead of file")
 	fmt.Println("  -log string           Path to log output CSV file (default: output.csv)")
 	fmt.Println("  -strategies string    Directory containing strategy JSON files (default: strategies/)")
+	fmt.Println("  -progress            Show progress bar during simulation")
 	fmt.Println("  -help                 Show this help message")
 	fmt.Println()
 	fmt.Println("Example:")

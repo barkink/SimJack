@@ -1,6 +1,8 @@
 package engine
 
-import "simjack/config"
+import (
+	"simjack/config"
+)
 
 type Player struct {
 	ID              int
@@ -73,7 +75,7 @@ func (p *Player) ResetRound() {
 }
 
 func (p *Player) CheckStatus() {
-	if p.Balance < p.BetUnit {
+	if p.Balance < p.BetUnitUsed {
 		p.IsBusted = true
 	}
 	if p.TargetBalance > 0 && p.Balance >= p.TargetBalance {
