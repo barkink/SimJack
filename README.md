@@ -207,45 +207,28 @@ round,shoe,deck_running_count,true_count,real_count_till_cut_card,box_id,player_
 
 ---
 
-⚡️ How Long Would 10 Million Hands Take in Real Life?
+## ⚡️ How Long Would 10 Million Hands Take in Real Life?
 
-SimJack can simulate 10 million hands in a single run.But how does that compare to real-life gameplay?
+SimJack can simulate 10 million hands in a single run. But how does that compare to real-life gameplay?
 
-Scenario
+| Scenario                     | Real Life (Casino)    | SimJack (Simulation) |
+| ---------------------------- | --------------------- | -------------------- |
+| Average time per round       | \~5 seconds           | < 0.002 seconds      |
+| 1 player x 10,000,000 rounds | \~578 days (non-stop) | \~2 minutes          |
+| 7-player full table          | \~4s x 7 = 28s/round  | still \~2 minutes    |
 
-Real Life (Casino)
+> 🌟 **SimJack compresses 1.5 years of gameplay into just 2 minutes.**
 
-SimJack (Simulation)
+---
 
-Average time per round
-
-~5 seconds
-
-< 0.002 seconds
-
-1 player x 10,000,000 rounds
-
-~578 days (non-stop)
-
-~2 minutes
-
-7-player full table
-
-~4s x 7 = 28s/round
-
-still ~2 minutes
-
-🌟 SimJack compresses 1.5 years of gameplay into just 2 minutes.
-
-🧠 Why It Matters
+## 🧠 Why It Matters
 
 With SimJack, you can:
 
-Make decisions based on statistical confidence, not just gut feeling
+* 🎯 Make decisions based on **statistical confidence**, not just gut feeling
+* ⏳ Avoid wasting days (or bankroll) testing bad strategies
+* 📊 Gather more data in **1 hour** than **1 year** of table experience
 
-Avoid wasting days (or bankroll) testing bad strategies
-
-Gather more data in 1 hour than 1 year of table experience
 
 ---
 
