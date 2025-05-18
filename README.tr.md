@@ -21,6 +21,8 @@ Kart sayma, dinamik bahis ayarlamaları, yan bahisler (Perfect Pair, 21+3) ve JS
 - ⚡ Milyonlarca eli tamponlu loglama ile verimli şekilde işler
 - 🧪 Zorunlu kartlar ve oyuncuya özel yapılandırmalar desteklenir
 - ✅ Komut satırı kullanımına hazır ve API uyumlu tasarım
+- 🗜 Opsiyonel gzip loglama desteği (`.csv.gz` olarak çıkış verir)
+- 📊 Konsolda opsiyonel ilerleme çubuğu (`-progress` parametresi ile)
 
 ---
 
@@ -31,7 +33,10 @@ git clone https://github.com/barkink/SimJack.git
 cd SimJack
 go run main.go -config=test_config.json -log=simjack_log.csv -strategies=strategies
 ```
+### 🔧 Opsiyonel Parametreler
 
+- `-progress` : Simülasyon ilerledikçe konsolda bir yüklenme çubuğu gösterir
+- `gzip_log`  : Yapılandırma dosyasında `true` verilirse `.csv.gz` olarak log kaydı yapılır
 ---
 
 ## ⚙️ Kullanım
