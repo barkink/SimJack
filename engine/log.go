@@ -48,9 +48,9 @@ func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
 	}
 
 	w.Write([]string{
-		"round", "shoe", "deck_running_count", "true_count", "real_count_till_cut_card", "box_id", "player_id", "hand_id", "owner", "hand", "result",
+		"round", "shoe", "deck_running_count", "true_count", "real_count_till_cut_card", "box_id", "player_id", "hand_id", "owner", "strategy", "hand", "result",
 		"bet_from_config", "bet_unit_used", "hand_payout", "main_payout", "pp_bet", "pp_win", "pp_type",
-		"p21_bet", "p21_win", "p21_type", "insurance_bet", "insurance_payout",
+		"p21_bet", "p21_win", "p21_type", "insurance_taken", "insurance_bet", "insurance_payout",
 		"initial_balance", "round_start_balance", "player_balance",
 		"is_blackjack", "is_doubled", "is_split_child", "split_count",
 		"dealer_upcard", "dealer_final_hand", "dealer_blackjack", "dealer_bust",
@@ -126,6 +126,7 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			strconv.Itoa(p.ID),
 			strconv.Itoa(hand.ID),
 			p.Owner,
+			p.Strategy.String(),
 			hand.String(),
 			hand.Result,
 			fmt.Sprintf("%.2f", hand.BetAmount),
@@ -138,6 +139,7 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			fmt.Sprintf("%.2f", box.P21Bet),
 			fmt.Sprintf("%.2f", box.P21Win),
 			box.P21Type,
+			boolToStr(p.InsuranceTaken),
 			fmt.Sprintf("%.2f", p.InsuranceBet),
 			fmt.Sprintf("%.2f", p.InsurancePayout),
 			fmt.Sprintf("%.2f", p.InitialBalance),
