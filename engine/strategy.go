@@ -23,6 +23,7 @@ type Strategy interface {
 	GetAction(hand *Hand, dealerUp Card) string
 	FallbackAction(failed string) string
 	DecideInsurance() bool
+	String() string
 }
 
 // Deviation: count'a göre farklı aksiyon
@@ -45,6 +46,7 @@ type CountingStrategy struct {
 	AcceptInsurance bool                     `json:"decide_insurance"`
 	Deck            *Deck                    `json:"-"` // runtime'da atanır
 	CountingEnabled bool                     // 💡 yeni alan
+	Name            string 
 }
 
 func (s *CountingStrategy) GetAction(hand *Hand, dealerUp Card) string {
@@ -146,6 +148,7 @@ func LoadCountingStrategyFromFile(name string) (*CountingStrategy, error) {
 		AcceptInsurance: data.DecideInsurance,
 		Deck:            nil, // deck dışarıdan yalnızca aktifse atanır
 		CountingEnabled: data.CountingEnabled,
+		Name:            name,
 	}, nil
 }
 
@@ -218,4 +221,8 @@ func getDealerRankKey(card Card) string {
 	default:
 		return strings.ToUpper(card.Rank)
 	}
+}
+
+func (s *CountingStrategy) String() string {
+	return s.Name
 }
