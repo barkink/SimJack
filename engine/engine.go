@@ -99,13 +99,25 @@ func (e *Engine) Run() {
 			e.CurrentShoeNumber++
 		}
 
-		if e.ShowProgress {
+		if e.ShowProgress && e.RoundCount > 0 {
 			percent := e.CurrentRound * 100 / e.RoundCount
+			if percent > 100 {
+				percent = 100
+			}
 			if percent != e.lastPercent {
 				e.lastPercent = percent
 				barLength := 20
 				filled := percent * barLength / 100
+				if filled > barLength {
+					filled = barLength
+				}
+				if filled < 0 {
+					filled = 0
+				}
 				empty := barLength - filled
+				if empty < 0 {
+					empty = 0
+				}
 				bar := "[" + strings.Repeat("█", filled) + strings.Repeat(" ", empty) + "]"
 				fmt.Printf("\r%s %3d%%", bar, percent)
 				if percent == 100 {
@@ -113,6 +125,7 @@ func (e *Engine) Run() {
 				}
 			}
 		}
+
 	}
 }
 
