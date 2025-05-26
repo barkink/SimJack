@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 type Card struct {
 	Rank string
