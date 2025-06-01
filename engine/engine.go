@@ -22,9 +22,12 @@ type Engine struct {
 	MaxSplits           int
 	ShowProgress bool
 	lastPercent  int
+	MinBet float64
+	MaxBet float64
+	Debug bool
 }
 
-func NewEngine(cfg config.SimulationConfig, logger *Logger, showProgress bool) *Engine {
+func NewEngine(cfg config.SimulationConfig, logger *Logger, showProgress bool, debug bool) *Engine {
 	players := []*Player{}
 	boxes := make([]*Box, 7)
 	deck := NewDeck(cfg.NumDecks, ParseForcedCards(cfg.ForcedCards))
@@ -46,18 +49,17 @@ func NewEngine(cfg config.SimulationConfig, logger *Logger, showProgress bool) *
 		p.Boxes = []*Box{}
 		players = append(players, p)
 
-		for _, boxIndex := range pc.BoxIndexes {
-			if boxIndex < 1 || boxIndex > 7 {
-				continue // Geçersiz box
+		for _, b := range pc.Boxes {
+			if b.Index < 1 || b.Index > 7 {
+				continue // geçersiz box
 			}
-			idx := boxIndex - 1
-			if boxes[idx] == nil {
-				boxes[idx] = NewBox(boxIndex, p)
-			} else {
-				// aynı box'a birden fazla kişi oturamaz
-				continue
+			idx := b.Index - 1
+			if boxes[idx] != nil {
+				continue // aynı box'a iki kişi oturamaz
 			}
-			p.Boxes = append(p.Boxes, boxes[idx])
+			box := NewBoxWithConfig(b, p)
+			boxes[idx] = box
+			p.Boxes = append(p.Boxes, box)
 		}
 	}
 
@@ -76,6 +78,9 @@ func NewEngine(cfg config.SimulationConfig, logger *Logger, showProgress bool) *
 		MaxSplits:           cfg.MaxSplits,
 		ShowProgress:        showProgress,
 		lastPercent:         -1,
+		MinBet: 			 cfg.MinBet,
+		MaxBet: 			 cfg.MaxBet,
+		Debug: 				 debug,
 	}
 }
 
@@ -119,7 +124,7 @@ func (e *Engine) Run() {
 					empty = 0
 				}
 				bar := "[" + strings.Repeat("█", filled) + strings.Repeat(" ", empty) + "]"
-				fmt.Printf("\r%s %3d%%", bar, percent)
+				fmt.Printf("\r%s %3d%% \t", bar, percent)
 				if percent == 100 {
 					fmt.Println()
 				}
@@ -133,37 +138,61 @@ func (e *Engine) PlayRound() {
 	e.Deck.ResetRoundCounter()
 	e.Dealer.ResetHand()
 
+	for _, p := range e.Players {
+		if !p.IsBusted && !p.IsRetired {
+			p.ResetRound()  // ✔️ yalnızca bir kez! Oyunucun round bazlı başında ve sonundaki kasa bilgisi her hand için aynı olsun diye. 
+		}
+	}
+
 	// Box içeriğini sıfırla
 	for _, box := range e.Boxes {
 		if box == nil || box.Player == nil || box.Player.IsBusted || box.Player.IsRetired {
 			continue
 		}
 		p := box.Player
-		p.ResetRound()
 		box.Reset()
 
 		if cs, ok := p.Strategy.(*CountingStrategy); ok {
-			p.BetUnitUsed = cs.GetBetUnit(p.BetUnit)
-		}
-		if !p.PlaceMainBet() {
-			//if !p.PlaceBet(p.BetUnit) {
-			p.IsBusted = true
-			continue
-		}
-		if pp := p.SidebetAmount("perfect_pair"); pp > 0 {
-			if !p.PlaceBet(pp) {
-				p.IsBusted = true
-				continue
-			}
-		}
-		if p21 := p.SidebetAmount("21+3"); p21 > 0 {
-			if !p.PlaceBet(p21) {
-				p.IsBusted = true
-				continue
-			}
+			box.MainBet = cs.GetBetUnit(box.OriginalMainBet)
 		}
 
-		hand := NewHand(p.BetUnit, box.ID, box.nextHandID)
+		// Bahisleri planla
+		mainBet := box.MainBet
+		ppBet := box.PerfectPairBet
+		p21Bet := box.P21Bet
+		total := mainBet + ppBet + p21Bet
+
+		// Oyuncunun toplam parası tümünü karşılıyorsa, hepsini yatır
+		if p.CanBet(total) {
+			p.PlaceBet(mainBet)
+			p.PlaceBet(ppBet)
+			p.PlaceBet(p21Bet)
+		} else if p.CanBet(mainBet) {
+			// Sadece main bet yatırılabiliyor, sidebet'ler yapılamaz
+			p.PlaceBet(mainBet)
+			box.PerfectPairBet = 0
+			box.P21Bet = 0
+		} else if p.CanBet(e.MinBet + ppBet + p21Bet) {
+			// Main bet düşürülür, yan bahislerle beraber
+			mainBet = e.MinBet + ppBet + p21Bet
+			p.PlaceBet(mainBet)
+			p.PlaceBet(ppBet)
+			p.PlaceBet(p21Bet)
+		}  else if p.CanBet(e.MinBet) {
+			// Main bet düşürülür, yan bahislerle beraber 
+			mainBet = e.MinBet
+			p.PlaceBet(e.MinBet)
+			box.PerfectPairBet = 0
+			box.P21Bet = 0
+		}else {
+			// Oyuncunun hiçbir bahis yapacak kadar parası yok
+			continue
+		}
+
+		// Box için güncellenen bet miktarını ayarla
+		box.MainBet = mainBet
+
+		hand := NewHand(box.MainBet, box.ID, box.nextHandID)
 		box.AddHand(hand)
 	}
 
@@ -207,7 +236,7 @@ func (e *Engine) PlayRound() {
 		if box.PerfectPairBet > 0 {
 			win, kind := GetPerfectPairPayout(c1, c2)
 			if win > 0 {
-				box.PerfectPairWin = win + box.PerfectPairBet
+				box.PerfectPairWin = float64(win + 1) *  box.PerfectPairBet
 			} else {
 				box.PerfectPairWin = 0
 			}
@@ -218,7 +247,7 @@ func (e *Engine) PlayRound() {
 			c3 := e.Dealer.Hand.Cards[0]
 			win, kind := Get21Plus3Payout([]Card{c1, c2, c3})
 			if win > 0 {
-				box.P21Win = win + box.P21Bet
+				box.P21Win = float64(win + 1) *  box.P21Bet
 			} else {
 				box.P21Win = 0
 			}
@@ -235,53 +264,29 @@ func (e *Engine) PlayRound() {
 			}
 			p := box.Player
 			if p.Strategy.DecideInsurance() {
-				amount := p.BetUnit / 2
-				if p.PlaceInsurance(amount) {
+				amount := box.MainBet / 2
+				if p.PlaceBet(amount) {
 					// sigorta başarıyla alındı
+					box.InsuranceTaken = true
+					box.InsuranceBet = amount
 				}
 			}
 		}
 	}
 
 	// Dealer hole card aldıysa ve blackjack yaptıysa kontrol et
-	if e.DealerTakesHoleCard && e.Dealer.Hand.IsBlackjack() {
+	if dealerHasAce && e.DealerTakesHoleCard && e.Dealer.Hand.IsBlackjack() {
 		for _, box := range e.Boxes {
 			if box == nil || box.Player == nil {
 				continue
 			}
-			p := box.Player
 
-			if p.InsuranceTaken {
-				p.WinInsurance()
+			if box.InsuranceTaken {
+				box.InsuranceResult = "win"
+				box.InsurancePayout = box.InsuranceBet * 2
 			} else {
-				p.LoseInsurance()
-			}
-
-			for _, hand := range box.Hands {
-				if hand.IsBlackjack() {
-					hand.Result = "push"
-					box.TotalPayout += hand.BetAmount
-				} else {
-					hand.Result = "lose"
-				}
-			}
-		}
-		e.handleRoundEnd() // round sonunda tüm box'ları işleyelim
-		return             // round burada biter
-	}
-
-	// Dealer hole card aldıysa ve blackjack yaptıysa kontrol et
-	if e.DealerTakesHoleCard && e.Dealer.Hand.IsBlackjack() {
-		for _, box := range e.Boxes {
-			if box == nil || box.Player == nil {
-				continue
-			}
-			p := box.Player
-
-			if p.InsuranceTaken {
-				p.WinInsurance()
-			} else {
-				p.LoseInsurance()
+				box.InsuranceResult = "lose"
+				box.InsurancePayout = 0
 			}
 
 			for _, hand := range box.Hands {
@@ -303,9 +308,10 @@ func (e *Engine) PlayRound() {
 			if box == nil || box.Player == nil {
 				continue
 			}
-			p := box.Player
-			if p.InsuranceTaken {
-				p.LoseInsurance()
+
+			if box.InsuranceTaken {
+				box.InsuranceResult = "lose"
+				box.InsurancePayout = 0
 			}
 		}
 	}
@@ -333,8 +339,8 @@ func (e *Engine) PlayRound() {
 	if dealerShouldPlay {
 		if len(e.Dealer.Hand.Cards) == 1 {
 			// Dealer ikinci kartı almamışsa şimdi alır
-			c2, _ := e.Deck.DealCard()
-			e.Dealer.Hand.AddCard(c2)
+			dc2, _ := e.Deck.DealCard()
+			e.Dealer.Hand.AddCard(dc2)
 
 			// Şimdi eline bakalım, blackjack mi?
 			if e.Dealer.Hand.IsBlackjack() {
@@ -342,12 +348,13 @@ func (e *Engine) PlayRound() {
 					if box == nil || box.Player == nil {
 						continue
 					}
-					p := box.Player
 
-					if p.InsuranceTaken {
-						p.WinInsurance()
+					if box.InsuranceTaken {
+						box.InsuranceResult = "win"
+						box.InsurancePayout = box.InsuranceBet * 2
 					} else {
-						p.LoseInsurance()
+						box.InsuranceResult = "lose"
+						box.InsurancePayout = 0
 					}
 
 					for _, hand := range box.Hands {
@@ -367,21 +374,30 @@ func (e *Engine) PlayRound() {
 					if box == nil || box.Player == nil {
 						continue
 					}
-					p := box.Player
-					if p.InsuranceTaken {
-						p.LoseInsurance()
+
+					if box.InsuranceTaken {
+						box.InsuranceResult = "lose"
+						box.InsurancePayout = 0
 					}
 				}
+				// Kurala göre devam et (soft 17 vs.)
+				if e.HitOnSoft17 {
+					e.Dealer.Play(e.Deck, true)
+				} else {
+					e.Dealer.Play(e.Deck, false)
+				}
+			}
+		} else {
+
+			// Kurala göre devam et (soft 17 vs.)
+			if e.HitOnSoft17 {
+				e.Dealer.Play(e.Deck, true)
+			} else {
+				e.Dealer.Play(e.Deck, false)
 			}
 		}
-
-		// Kurala göre devam et (soft 17 vs.)
-		if e.HitOnSoft17 {
-			e.Dealer.Play(e.Deck, true)
-		} else {
-			e.Dealer.Play(e.Deck, false)
-		}
 	}
+
 	e.handleRoundEnd() // round sonunda tüm box'ları işleyelim
 }
 
@@ -402,7 +418,7 @@ func (e *Engine) executeBoxActions() {
 			action := p.Strategy.GetAction(hand, e.Dealer.Hand.Cards[0])
 
 			if action == "split" && hand.CanSplit() && len(box.Hands) < e.MaxSplits+1 {
-				if p.PlaceBet(p.BetUnit) {
+				if p.PlaceBet(hand.BetAmount) {
 					c1 := hand.Cards[0]
 					c2 := hand.Cards[1]
 
@@ -486,16 +502,39 @@ func (e *Engine) handleRoundEnd() {
 		// Yan bahisleri ekle
 		box.TotalPayout += box.PerfectPairWin + box.P21Win
 		// Sigorta ödemesi
-		box.TotalPayout += box.Player.InsurancePayout
+		box.TotalPayout += box.InsurancePayout
 
 		// Ödemeyi yap
 		box.Player.ReceivePayout(box.TotalPayout)
-		box.Player.CheckStatus()
+	}
 
-		// ileride loglama vs. de buraya gelir
+	for _, p := range e.Players {
+		if !p.IsBusted && !p.IsRetired {
+			p.CheckStatus(e.MinBet, e.CurrentRound)
+		}
+	}
+
+	for _, box := range e.Boxes {
+		if box == nil || box.Player == nil {
+			continue
+		}
 		if e.Logger != nil {
 			e.Logger.LogRound(e.CurrentRound, e.CurrentShoeNumber, box, e.Deck, e.Dealer)
 		}
 		box.Reset()
 	}
+
+	if e.Debug {
+		for _, p := range e.Players {
+			if p.BustedAtRound == e.CurrentRound {
+				fmt.Printf("❌ Player %d (%s) BUSTED at round %d | Balance: %.2f\n",
+					p.ID, p.Owner, p.BustedAtRound, p.Balance)
+			}
+			if p.RetiredAtRound == e.CurrentRound {
+				fmt.Printf("🏁 Player %d (%s) RETIRED at round %d | Balance: %.2f\n",
+					p.ID, p.Owner, p.RetiredAtRound, p.Balance)
+			}
+		}
+	}
+
 }

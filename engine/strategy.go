@@ -61,7 +61,7 @@ func (s *CountingStrategy) GetAction(hand *Hand, dealerUp Card) string {
 		key = fmt.Sprintf("hard_%d_vs_%s", val, dealerKey)
 	}
 
-	if dev, ok := s.Deviations[key]; ok && s.Deck != nil && s.Deck.GetRunningCount() >= dev.AtCount {
+	if dev, ok := s.Deviations[key]; ok && s.Deck != nil && s.getTrueCount() >= float64(dev.AtCount) {
 		hand.DecisionTrace = append(hand.DecisionTrace, DecisionLogEntry{
 			Key:    key,
 			Action: dev.Action + " (deviation)",
@@ -101,9 +101,9 @@ func (s *CountingStrategy) GetBetUnit(base float64) float64 {
 	if s.Deck == nil {
 		return base
 	}
-	count := s.Deck.GetRunningCount()
+	trueCount := s.getTrueCount()
 	for i := len(s.BetRamp) - 1; i >= 0; i-- {
-		if count >= s.BetRamp[i].MinCount {
+		if trueCount >= float64(s.BetRamp[i].MinCount) {
 			return base * s.BetRamp[i].BetUnit
 		}
 	}
@@ -113,7 +113,6 @@ func (s *CountingStrategy) GetBetUnit(base float64) float64 {
 // JSON formatına uygun geçici yapı
 type CountingStrategyFile struct {
 	Fallback        string                   `json:"fallback"`
-	DecideInsurance bool                     `json:"decide_insurance"`
 	Actions         map[string][]string      `json:"actions"`
 	Deviations      map[string]DeviationRule `json:"deviations"`
 	BetRamp         []BetRampTier            `json:"bet_ramp"`
@@ -137,7 +136,6 @@ func LoadCountingStrategyFromFile(name string) (*CountingStrategy, error) {
 
 	base := &DynamicStrategy{
 		Fallback:        data.Fallback,
-		AcceptInsurance: data.DecideInsurance,
 		Actions:         data.Actions,
 	}
 
@@ -145,7 +143,6 @@ func LoadCountingStrategyFromFile(name string) (*CountingStrategy, error) {
 		BaseStrategy:    base,
 		Deviations:      data.Deviations,
 		BetRamp:         data.BetRamp,
-		AcceptInsurance: data.DecideInsurance,
 		Deck:            nil, // deck dışarıdan yalnızca aktifse atanır
 		CountingEnabled: data.CountingEnabled,
 		Name:            name,
@@ -225,4 +222,15 @@ func getDealerRankKey(card Card) string {
 
 func (s *CountingStrategy) String() string {
 	return s.Name
+}
+
+func (s *CountingStrategy) getTrueCount() float64 {
+	if s.Deck == nil || len(s.Deck.Cards) == 0 {
+		return 0
+	}
+	remainingDecks := float64(len(s.Deck.Cards)) / 52.0
+	if remainingDecks == 0 {
+		return 0
+	}
+	return float64(s.Deck.RunningCount) / remainingDecks
 }

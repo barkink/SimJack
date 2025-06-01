@@ -1,6 +1,5 @@
 {
   "fallback": "stand",
-  "decide_insurance": false,
   "counting_enabled": true,
   "actions": {
     "pair_A_vs_2": [

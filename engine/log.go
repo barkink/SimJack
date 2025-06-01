@@ -19,6 +19,7 @@ type Logger struct {
 	flushEvery int
 	counter    int
 	gzipEnabled bool
+	FinalPath   string
 }
 
 func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
@@ -48,14 +49,16 @@ func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
 	}
 
 	w.Write([]string{
-		"round", "shoe", "deck_running_count", "true_count", "real_count_till_cut_card", "box_id", "player_id", "hand_id", "owner", "strategy", "hand", "result",
+		"round", "shoe", "deck_running_count", "true_count", "real_count_till_cut_card", "box_id", "player_id", "hand_id", "owner", "strategy", 
 		"bet_from_config", "bet_unit_used", "hand_payout", "main_payout", "pp_bet", "pp_win", "pp_type",
-		"p21_bet", "p21_win", "p21_type", "insurance_taken", "insurance_bet", "insurance_payout",
+		"p21_bet", "p21_win", "p21_type", "insurance_taken", "insurance_bet", "insurance_payout", "insurance_result",
 		"initial_balance", "round_start_balance", "player_balance",
+		"hand", "result",
 		"is_blackjack", "is_doubled", "is_split_child", "split_count",
 		"dealer_upcard", "dealer_final_hand", "dealer_blackjack", "dealer_bust",
 		"player_bust", "player_draws", "player_is_bankrupt", "player_is_retired",
 		"num_decks", "cut_card_position", "cards_drawn_total", "cards_drawn_round", "cards_left_after_round", "strategy_key",
+		"box_total_invested","box_total_earned",
 	})
 	w.Flush()
 
@@ -68,6 +71,7 @@ func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
 		flushEvery: 10000,
 		counter:    0,
 		gzipEnabled:    gzipEnabled,
+		FinalPath: finalPath,
 	}, nil
 }
 
@@ -94,7 +98,7 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 	dealerBJ := boolToStr(dealer.Hand.IsBlackjack())
 	dealerBust := boolToStr(dealer.Hand.CalculateValue() > 21)
 
-	for _, hand := range box.Hands {
+	for i, hand := range box.Hands {
 		draws := ""
 		if len(hand.Cards) > 2 {
 			for i, c := range hand.Cards[2:] {
@@ -127,10 +131,8 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			strconv.Itoa(hand.ID),
 			p.Owner,
 			p.Strategy.String(),
-			hand.String(),
-			hand.Result,
+			fmt.Sprintf("%.2f", box.OriginalMainBet),
 			fmt.Sprintf("%.2f", hand.BetAmount),
-			fmt.Sprintf("%.2f", box.Player.BetUnitUsed),
 			fmt.Sprintf("%.2f", hand.Payout),
 			fmt.Sprintf("%.2f", box.TotalPayout),
 			fmt.Sprintf("%.2f", box.PerfectPairBet),
@@ -139,12 +141,15 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			fmt.Sprintf("%.2f", box.P21Bet),
 			fmt.Sprintf("%.2f", box.P21Win),
 			box.P21Type,
-			boolToStr(p.InsuranceTaken),
-			fmt.Sprintf("%.2f", p.InsuranceBet),
-			fmt.Sprintf("%.2f", p.InsurancePayout),
+			boolToStr(box.InsuranceTaken),
+			fmt.Sprintf("%.2f", box.InsuranceBet),
+			fmt.Sprintf("%.2f", box.InsurancePayout),
+			fmt.Sprintf("%s", box.InsuranceResult),
 			fmt.Sprintf("%.2f", p.InitialBalance),
 			fmt.Sprintf("%.2f", p.RoundStartBal),
 			fmt.Sprintf("%.2f", p.Balance),
+			hand.String(),
+			hand.Result,
 			boolToStr(hand.IsBlackjack()),
 			boolToStr(hand.IsDoubled),
 			boolToStr(hand.IsSplitChild),
@@ -164,6 +169,35 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			strconv.Itoa(len(deck.Cards)),
 			traceStr,
 		}
+
+		if i == len(box.Hands)-1 {
+			// Bu box için son eldeyiz
+
+			// Total yatırım = ana bahislerin toplamı + sidebet
+			totalBet := box.PerfectPairBet + box.P21Bet
+			for _, h := range box.Hands {
+				totalBet += h.BetAmount
+			}
+
+			// Total kazanç = yan bahis kazançları + ellerin sonucuna göre payout
+			totalWin := box.PerfectPairWin + box.P21Win
+			for _, h := range box.Hands {
+				switch h.Result {
+				case "win":
+					totalWin += h.BetAmount * 2
+				case "push":
+					totalWin += h.BetAmount
+				}
+			}
+
+			record = append(record, fmt.Sprintf("%.2f", totalBet)) // box_total_invested
+			record = append(record, fmt.Sprintf("%.2f", totalWin)) // box_total_earned
+		} else {
+			record = append(record, "")
+			record = append(record, "")
+		}
+
+
 		l.writer.Write(record)
 		l.counter++
 		if l.counter%l.flushEvery == 0 {

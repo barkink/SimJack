@@ -1,5 +1,4 @@
 {
-  "decide_insurance": false,
   "fallback": "stand",
   "actions": {
     "pair_A_vs_2": [

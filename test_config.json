@@ -1,41 +1,67 @@
 {
-    "num_decks": 8,
-    "round_count": 10000000,
-    "hit_on_soft_17": false,
-    "allow_double_after_split": false,
-    "accept_insurance": true,
-    "dealer_takes_hole_card": true,
-    "forced_cards": [],
-    "strategy_directory": "strategies",
-    "gzip_log": true,
-    "max_splits": 1,
-    "players": [
-      {
-        "player_id": 1,
-        "initial_balance": 1000000.0,
-        "target_balance": 0.0,
-        "bet_unit": 10.0,
-        "strategy": "hi-lo",
-        "owner": "PlayerOne",
-        "box_indexes": [1, 2],
-        "sidebets": {
-          "perfect_pair": 1.0,
-          "21+3": 1.0
+  "num_decks": 6,
+  "round_count": 100000,
+  "hit_on_soft_17": true,
+  "allow_double_after_split": true,
+  "dealer_takes_hole_card": true,
+  "forced_cards": [],
+  "strategy_directory": "strategies",
+  "gzip_log": false,
+  "max_splits": 3,
+  "min_bet": 10,
+  "max_bet": 1000,
+  "players": [
+    {
+      "player_id": 1,
+      "owner": "PlayerAlpha",
+      "initial_balance": 5000,
+      "target_balance": 0,
+      "strategy": "hi-lo",
+      "accept_insurance": true,
+      "boxes": [
+        {
+          "index": 1,
+          "main_bet": 75,
+          "sidebets": {
+            "perfect_pair": 10,
+            "21+3": 5
+          }
+        },
+        {
+          "index": 2,
+          "main_bet": 50,
+          "sidebets": {
+            "perfect_pair": 5,
+            "21+3": 0
+          }
         }
-      },
-      {
-        "player_id": 2,
-        "owner": "PlayerTwo",
-        "initial_balance": 800000.0,
-        "target_balance": 0.0,
-        "bet_unit": 5.0,
-        "strategy": "basic",
-        "box_indexes": [3, 4, 5],
-        "sidebets": {
-          "perfect_pair": 0.0,
-          "21+3": 0.0
+      ]
+    },
+    {
+      "player_id": 2,
+      "owner": "PlayerBravo",
+      "initial_balance": 3000,
+      "target_balance": 0,
+      "strategy": "basic",
+      "accept_insurance": false,
+      "boxes": [
+        {
+          "index": 5,
+          "main_bet": 40,
+          "sidebets": {
+            "perfect_pair": 0,
+            "21+3": 10
+          }
+        },
+        {
+          "index": 6,
+          "main_bet": 25,
+          "sidebets": {
+            "perfect_pair": 15,
+            "21+3": 0
+          }
         }
-      }
-    ]
-  }
-  
+      ]
+    }
+  ]
+}

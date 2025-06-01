@@ -1,5 +1,7 @@
 package engine
 
+import "simjack/config"
+
 type Box struct {
 	ID              int
 	Player          *Player
@@ -14,22 +16,13 @@ type Box struct {
 	TotalPayout     float64
 	SplitCount      int
 	nextHandID      int
-}
-
-func NewBox(id int, player *Player) *Box {
-	box := &Box{
-		ID:              id,
-		Player:          player,
-		MainBet:         player.BetUnit,
-		PerfectPairBet:  player.SidebetAmount("perfect_pair"),
-		P21Bet:          player.SidebetAmount("21+3"),
-		PerfectPairType: "none",
-		P21Type:         "none",
-		Hands:           []*Hand{},
-		nextHandID:      1,
-	}
-	registerBox(box)
-	return box
+	OriginalMainBet        float64
+	OriginalPerfectPairBet float64
+	OriginalP21Bet         float64
+	InsuranceTaken  bool
+	InsuranceBet    float64
+	InsuranceResult string
+	InsurancePayout float64
 }
 
 func (b *Box) AddHand(h *Hand) {
@@ -50,4 +43,32 @@ func (b *Box) Reset() {
 	b.TotalPayout = 0
 	b.SplitCount = 0
 	b.nextHandID = 1
+	b.MainBet = b.OriginalMainBet
+	b.PerfectPairBet = b.OriginalPerfectPairBet
+	b.P21Bet = b.OriginalP21Bet
+	b.InsuranceTaken = false
+	b.InsuranceBet = 0
+	b.InsuranceResult = "none"
+	b.InsurancePayout = 0
+}
+
+func NewBoxWithConfig(cfg config.BoxAssignment, player *Player) *Box {
+	return &Box{
+		ID:              cfg.Index,
+		Player:          player,
+		MainBet:         cfg.MainBet,
+		PerfectPairBet:  cfg.Sidebets["perfect_pair"],
+		P21Bet:          cfg.Sidebets["21+3"],
+		OriginalMainBet:      cfg.MainBet,
+		OriginalPerfectPairBet: cfg.Sidebets["perfect_pair"],
+		OriginalP21Bet:         cfg.Sidebets["21+3"],
+		PerfectPairType: "none",
+		P21Type:         "none",
+		Hands:           []*Hand{},
+		nextHandID:      1,
+		InsuranceTaken:  false,
+		InsuranceBet:    0,
+		InsuranceResult: "none",
+		InsurancePayout: 0,
+	}
 }

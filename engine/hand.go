@@ -4,13 +4,6 @@ import (
 	"strings"
 )
 
-// external link to Box registry for global access (registered by engine)
-var boxRegistry = map[int]*Box{}
-
-func registerBox(box *Box) {
-	boxRegistry[box.ID] = box
-}
-
 type DecisionLogEntry struct {
 	Key    string
 	Action string

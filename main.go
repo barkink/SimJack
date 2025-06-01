@@ -16,6 +16,7 @@ func main() {
 	logPath := flag.String("log", "output.csv", "Path to log output CSV file (default: output.csv)")
 	strategyDir := flag.String("strategies", "strategies", "Directory containing strategy JSON files (default: ./strategies)")
 	showProgress := flag.Bool("progress", false, "Show progress bar during simulation")
+	debug := flag.Bool("debug", false, "Enable debug mode for round-level output")
 	help := flag.Bool("help", false, "Show usage")
 	flag.Parse()
 
@@ -61,7 +62,6 @@ func main() {
 		printUsage()
 		os.Exit(1)
 	}
-
 	logger, err := engine.NewLogger(*logPath, cfg.GzipEnabled)
 	if err != nil {
 		fmt.Printf("Failed to create log file: %v\n\n", err)
@@ -69,11 +69,12 @@ func main() {
 		os.Exit(1)
 	}
 	defer logger.Close()
-
-	eng := engine.NewEngine(cfg, logger, *showProgress)
+	eng := engine.NewEngine(cfg, logger, *showProgress, *debug)
 	eng.Run()
 
-	fmt.Println("\nSimulation completed. Log written to", *logPath)
+	if *debug {
+	fmt.Println("Simulation completed. Log written to", logger.FinalPath)
+	}
 }
 
 func printUsage() {
