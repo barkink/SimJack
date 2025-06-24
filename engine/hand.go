@@ -1,51 +1,74 @@
 package engine
 
 import (
+	"fmt"
 	"strings"
 )
 
+// DecisionLogEntry, bir el için alınan stratejik kararın tüm adımlarını kaydeder.
 type DecisionLogEntry struct {
-	Key    string
-	Action string
+	Key          string   `json:"key"`
+	Actions      []string `json:"actions"`
+	FinalAction  string   `json:"final_action"`
+	IsDeviation  bool     `json:"is_deviation"`
+	IsFallback   bool     `json:"is_fallback"`
 }
 
 type Hand struct {
-	Cards         []Card
-	IsDoubled     bool
-	IsSplitChild  bool
-	BetAmount     float64
-	Result        string
-	BoxID         int
-	Payout        float64
-	ID            int
-	DecisionTrace []DecisionLogEntry
+	ID            string             `json:"id"`
+	BoxID         string             `json:"box_id"`
+	Cards         []Card             `json:"cards"`
+	BetAmount     float64            `json:"bet_amount"`
+	Payout        float64            `json:"payout"`
+	Result        string             `json:"result"`
+	IsSplitChild  bool               `json:"is_split_child"`
+	IsDoubled     bool               `json:"is_doubled"`
+	DecisionTrace []DecisionLogEntry `json:"decision_trace"`
+	FinalAction   string             `json:"-"` // Bu loglama için geçici bir alandır
+	StrategyActions []string         `json:"-"` // Bu loglama için geçici bir alandır
 }
 
-func NewHand(bet float64, boxID int, id int) *Hand {
+func NewHand(bet float64, boxID string, handID int) *Hand {
 	return &Hand{
-		ID:            id,
+		ID:            fmt.Sprintf("%s-%d", boxID, handID),
+		BoxID:         boxID,
 		Cards:         []Card{},
 		BetAmount:     bet,
-		BoxID:         boxID,
-		Payout:        0,
 		DecisionTrace: []DecisionLogEntry{},
 	}
 }
 
-func NewSplitHand(from *Hand, id int) *Hand {
+func NewSplitHand(from *Hand, handID int) *Hand {
 	return &Hand{
-		ID:            id,
+		ID:            fmt.Sprintf("%s-%d", from.BoxID, handID),
+		BoxID:         from.BoxID,
 		Cards:         []Card{},
 		BetAmount:     from.BetAmount,
 		IsSplitChild:  true,
-		BoxID:         from.BoxID,
-		Payout:        0,
 		DecisionTrace: append([]DecisionLogEntry{}, from.DecisionTrace...),
 	}
 }
 
 func (h *Hand) AddCard(c Card) {
 	h.Cards = append(h.Cards, c)
+}
+
+// SetDecisionTrace, bir el için önerilen stratejiyi ve nihai kararı kaydeder.
+// Bu fonksiyon, executeBoxActions içinde çağrılır.
+func (h *Hand) SetDecisionTrace(actions []string) {
+	h.StrategyActions = actions
+}
+
+// FinalizeDecision, el için nihai kararı kaydeder.
+func (h *Hand) FinalizeDecision(key, finalAction string, isDeviation, isFallback bool) {
+	logEntry := DecisionLogEntry{
+		Key:         key,
+		Actions:     h.StrategyActions,
+		FinalAction: finalAction,
+		IsDeviation: isDeviation,
+		IsFallback:  isFallback,
+	}
+	h.DecisionTrace = append(h.DecisionTrace, logEntry)
 }
 
 func (h *Hand) CalculateValue() int {

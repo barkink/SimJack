@@ -10,8 +10,10 @@ type SimulationConfig struct {
 	StrategyDirectory     string         `json:"strategy_directory"`
 	GzipEnabled           bool           `json:"gzip_log"`
 	MaxSplits             int            `json:"max_splits"`
-	MinBet                float64        `json:"min_bet"`    // ✅ yeni
-	MaxBet                float64        `json:"max_bet"`    // ✅ yeni
+	AllowSurrender        bool           `json:"allow_surrender"`
+	SurrenderAgainstAce   bool           `json:"surrender_against_ace"` 
+	MinBet                float64        `json:"min_bet"` 
+	MaxBet                float64        `json:"max_bet"`
 	Players               []PlayerConfig `json:"players"`
 }
 
@@ -21,7 +23,7 @@ type PlayerConfig struct {
 	TargetBalance  float64           `json:"target_balance"`
 	Strategy       string            `json:"strategy"`
 	Owner          string            `json:"owner"`
-	Boxes          []BoxAssignment   `json:"boxes"`  // ✅ yeni yapı
+	Boxes          []BoxAssignment   `json:"boxes"`
 	AcceptInsurance  bool            `json:"accept_insurance"` 
 }
 

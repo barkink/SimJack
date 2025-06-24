@@ -20,8 +20,8 @@ func SetStrategyDirectory(path string) error {
 
 // Strategy interface - oyuncuya atanacak stratejiler bunu implement etmeli
 type Strategy interface {
-	GetAction(hand *Hand, dealerUp Card) string
-	FallbackAction(failed string) string
+	// GetAction, eylem listesini, fallback olup olmadığını, deviation olup olmadığını ve strateji anahtarını döndürür.
+	GetAction(hand *Hand, dealerUp Card) (actions []string, isFallback bool, isDeviation bool, key string)
 	DecideInsurance() bool
 	String() string
 }
@@ -49,7 +49,7 @@ type CountingStrategy struct {
 	Name            string 
 }
 
-func (s *CountingStrategy) GetAction(hand *Hand, dealerUp Card) string {
+func (s *CountingStrategy) GetAction(hand *Hand, dealerUp Card) ([]string, bool, bool, string) {
 	val := hand.CalculateValue()
 	dealerKey := getDealerRankKey(dealerUp)
 	key := ""
@@ -62,29 +62,13 @@ func (s *CountingStrategy) GetAction(hand *Hand, dealerUp Card) string {
 	}
 
 	if dev, ok := s.Deviations[key]; ok && s.Deck != nil && s.getTrueCount() >= float64(dev.AtCount) {
-		hand.DecisionTrace = append(hand.DecisionTrace, DecisionLogEntry{
-			Key:    key,
-			Action: dev.Action + " (deviation)",
-		})
-		return dev.Action
+		// Deviation (sapma) varsa, bu tek ve öncelikli eylemdir.
+		return []string{dev.Action}, false, true, key
 	}
-	action := s.BaseStrategy.GetAction(hand, dealerUp)
-	// base strategy key mevcut mi kontrol edelim
-	_, has := s.BaseStrategy.Actions[key]
-	suffix := " (main)"
-	if !has {
-		suffix = " (fallback)"
-	}
-
-	hand.DecisionTrace = append(hand.DecisionTrace, DecisionLogEntry{
-		Key:    key,
-		Action: action + suffix,
-	})
-	return action
-}
-
-func (s *CountingStrategy) FallbackAction(failed string) string {
-	return s.BaseStrategy.FallbackAction(failed)
+	
+	// Sapma yoksa, temel stratejiyi çağır.
+	actions, isFallback := s.BaseStrategy.GetAction(hand, dealerUp)
+	return actions, isFallback, false, key
 }
 
 func (s *CountingStrategy) DecideInsurance() bool {
@@ -117,6 +101,7 @@ type CountingStrategyFile struct {
 	Deviations      map[string]DeviationRule `json:"deviations"`
 	BetRamp         []BetRampTier            `json:"bet_ramp"`
 	CountingEnabled bool                     `json:"counting_enabled"`
+	AcceptInsurance  bool                     `json:"decide_insurance"`
 }
 
 // JSON dosyasından CountingStrategy yükler
@@ -156,9 +141,10 @@ type DynamicStrategy struct {
 	Actions         map[string][]string `json:"actions"`
 }
 
-func (s *DynamicStrategy) GetAction(hand *Hand, dealerUp Card) string {
+func (s *DynamicStrategy) GetAction(hand *Hand, dealerUp Card) ([]string, bool) {
 	val := hand.CalculateValue()
 	dealerKey := getDealerRankKey(dealerUp)
+	// ... (key oluşturma mantığı aynı)
 	key := ""
 	if hand.CanSplit() {
 		key = fmt.Sprintf("pair_%s_vs_%s", hand.Cards[0].Rank, dealerKey)
@@ -167,25 +153,11 @@ func (s *DynamicStrategy) GetAction(hand *Hand, dealerUp Card) string {
 	} else {
 		key = fmt.Sprintf("hard_%d_vs_%s", val, dealerKey)
 	}
-	if actions, ok := s.Actions[key]; ok && len(actions) > 0 {
-		return actions[0]
-	}
-	return s.Fallback
-}
 
-func (s *DynamicStrategy) FallbackAction(failed string) string {
-	for _, actions := range s.Actions {
-		if len(actions) > 1 && actions[0] == failed {
-			fallback := strings.TrimSpace(actions[1])
-			if fallback != "" {
-				return fallback
-			}
-		}
+	if actions, ok := s.Actions[key]; ok && len(actions) > 0 {
+		return actions, false // Ana strateji, fallback değil
 	}
-	if failed == "double" || failed == "split" {
-		return "hit"
-	}
-	return s.Fallback
+	return []string{s.Fallback}, true // Bu bir fallback
 }
 
 func (s *DynamicStrategy) DecideInsurance() bool {
@@ -197,18 +169,16 @@ func LoadStrategyFromFile(name string) (Strategy, error) {
 }
 
 func hasAceButNotPair(h *Hand) bool {
+	// Sadece iki kartlı eller soft olabilir (split sonrası gelenler dahil)
 	if len(h.Cards) != 2 {
 		return false
 	}
-	hasAce := false
-	for _, c := range h.Cards {
-		if c.Rank == "A" {
-			hasAce = true
-		} else if c.Rank == h.Cards[0].Rank && h.Cards[0].Rank != "A" {
-			return false
-		}
+	// Eğer kartlar aynıysa (çift ise), soft değildir. AA çifti split'e girer.
+	if h.Cards[0].Rank == h.Cards[1].Rank {
+		return false
 	}
-	return hasAce
+	// Kartlardan biri As ise, el soft'tur.
+	return h.Cards[0].Rank == "A" || h.Cards[1].Rank == "A"
 }
 
 func getDealerRankKey(card Card) string {
@@ -233,4 +203,21 @@ func (s *CountingStrategy) getTrueCount() float64 {
 		return 0
 	}
 	return float64(s.Deck.RunningCount) / remainingDecks
+}
+
+func LoadCountingStrategyFromData(name string, data CountingStrategyFile) (*CountingStrategy, error) {
+	base := &DynamicStrategy{
+		Fallback:        data.Fallback,
+		Actions:         data.Actions,
+		AcceptInsurance: data.AcceptInsurance, // bu alan optional ama sorun yaratmaz
+	}
+
+	return &CountingStrategy{
+		BaseStrategy:    base,
+		Deviations:      data.Deviations,
+		BetRamp:         data.BetRamp,
+		Deck:            nil,
+		CountingEnabled: data.CountingEnabled,
+		Name:            name,
+	}, nil
 }

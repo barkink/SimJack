@@ -3,6 +3,7 @@ package engine
 import (
 	"compress/gzip"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,15 +12,16 @@ import (
 )
 
 type Logger struct {
-	file       *os.File
-	writer     *csv.Writer
-	gzipWriter *gzip.Writer
-	finalPath  string
-	tempPath   string
-	flushEvery int
-	counter    int
+	file        *os.File
+	writer      *csv.Writer
+	gzipWriter  *gzip.Writer
+	finalPath   string
+	tempPath    string
+	flushEvery  int
+	counter     int
 	gzipEnabled bool
 	FinalPath   string
+	headerWritten bool
 }
 
 func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
@@ -48,7 +50,22 @@ func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
 		w = csv.NewWriter(f)
 	}
 
-	w.Write([]string{
+	return &Logger{
+		file:        f,
+		writer:      w,
+		gzipWriter:  gw,
+		tempPath:    tempPath,
+		finalPath:   finalPath,
+		flushEvery:  10000,
+		counter:     0,
+		gzipEnabled: gzipEnabled,
+		FinalPath:   finalPath,
+		headerWritten: false,
+	}, nil
+}
+
+func (l *Logger) writeHeader() {
+	l.writer.Write([]string{
 		"round", "shoe", "deck_running_count", "true_count", "real_count_till_cut_card", "box_id", "player_id", "hand_id", "owner", "strategy", 
 		"bet_from_config", "bet_unit_used", "hand_payout", "main_payout", "pp_bet", "pp_win", "pp_type",
 		"p21_bet", "p21_win", "p21_type", "insurance_taken", "insurance_bet", "insurance_payout", "insurance_result",
@@ -57,25 +74,18 @@ func NewLogger(path string, gzipEnabled bool) (*Logger, error) {
 		"is_blackjack", "is_doubled", "is_split_child", "split_count",
 		"dealer_upcard", "dealer_final_hand", "dealer_blackjack", "dealer_bust",
 		"player_bust", "player_draws", "player_is_bankrupt", "player_is_retired",
-		"num_decks", "cut_card_position", "cards_drawn_total", "cards_drawn_round", "cards_left_after_round", "strategy_key",
+		"num_decks", "cut_card_position", "cards_drawn_total", "cards_drawn_round", "cards_left_after_round", 
+		"decision_trace",
 		"box_total_invested","box_total_earned",
 	})
-	w.Flush()
-
-	return &Logger{
-		file:       f,
-		writer:     w,
-		gzipWriter: gw,
-		tempPath:   tempPath,
-		finalPath:  finalPath,
-		flushEvery: 10000,
-		counter:    0,
-		gzipEnabled:    gzipEnabled,
-		FinalPath: finalPath,
-	}, nil
+	l.writer.Flush()
 }
 
 func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dealer) {
+	if !l.headerWritten {
+		l.writeHeader()
+		l.headerWritten = true
+	}
 	p := box.Player
 	trueCount := 0
 	if deck != nil && deck.NumDecks > 0 {
@@ -110,15 +120,10 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 		}
 
 		//action Key hesaplama
-		traceStr := "no_decision_needed"
-		if len(hand.DecisionTrace) > 0 {
-			traceStr = ""
-			for i, entry := range hand.DecisionTrace {
-				if i > 0 {
-					traceStr += "; "
-				}
-				traceStr += fmt.Sprintf("%s:%s", entry.Key, entry.Action)
-			}
+		traceBytes, err := json.Marshal(hand.DecisionTrace)
+		traceStr := "[]" // Varsayılan olarak boş JSON dizisi
+		if err == nil {
+			traceStr = string(traceBytes)
 		}
 		record := []string{
 			strconv.Itoa(round),
@@ -126,9 +131,9 @@ func (l *Logger) LogRound(round int, shoe int, box *Box, deck *Deck, dealer *Dea
 			strconv.Itoa(int(float64(deck.RunningCount))),
 			strconv.Itoa(trueCount),
 			strconv.Itoa(deck.RealCountTillCutCard),
-			strconv.Itoa(box.ID),
+			box.ID,
 			strconv.Itoa(p.ID),
-			strconv.Itoa(hand.ID),
+			hand.ID,
 			p.Owner,
 			p.Strategy.String(),
 			fmt.Sprintf("%.2f", box.OriginalMainBet),

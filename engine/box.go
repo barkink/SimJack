@@ -1,9 +1,12 @@
 package engine
 
-import "simjack/config"
+import (
+	"fmt"
+	"simjack/config"
+)
 
 type Box struct {
-	ID              int
+	ID              string
 	Player          *Player
 	Hands           []*Hand
 	MainBet         float64
@@ -54,7 +57,7 @@ func (b *Box) Reset() {
 
 func NewBoxWithConfig(cfg config.BoxAssignment, player *Player) *Box {
 	return &Box{
-		ID:              cfg.Index,
+		ID:              fmt.Sprintf("B%d", cfg.Index),
 		Player:          player,
 		MainBet:         cfg.MainBet,
 		PerfectPairBet:  cfg.Sidebets["perfect_pair"],

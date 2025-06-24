@@ -6,12 +6,12 @@ type Dealer struct {
 
 func NewDealer() *Dealer {
 	return &Dealer{
-		Hand: NewHand(0, -1, -1), // -1: dealer box yok
+		Hand: NewHand(0, "dealer", -1), // -1: dealer box yok
 	}
 }
 
 func (d *Dealer) ResetHand() {
-	d.Hand = NewHand(0, -1, -1)
+	d.Hand = NewHand(0, "dealer", -1)
 }
 
 func (d *Dealer) Play(deck *Deck, hitOnSoft17 bool) {

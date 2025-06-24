@@ -333,12 +333,15 @@
       "hit"
     ],
     "hard_16_vs_9": [
+      "surrender", 
       "hit"
     ],
     "hard_16_vs_10": [
+      "surrender", 
       "hit"
     ],
     "hard_16_vs_A": [
+      "surrender", 
       "hit"
     ],
     "hard_15_vs_2": [
@@ -366,6 +369,7 @@
       "hit"
     ],
     "hard_15_vs_10": [
+      "surrender", 
       "hit"
     ],
     "hard_15_vs_A": [
