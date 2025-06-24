@@ -15,18 +15,17 @@ It supports card counting, dynamic bet ramping, sidebets (Perfect Pair, 21+3), a
 ## 🚀 Features
 
 - ♠️ Full blackjack game engine (7-box table, dealer AI, split/double support)
-- 🧠 Strategy files loaded dynamically via JSON (no recompile!)
-- 🧠 Custom strategy support (basic & card counting)
-- 📈 Deviation rules based on true count
-- 🎯 Bet ramping with true count multipliers
-- 💼 Supports perfect pair & 21+3 sidebets
-- 📦 JSON-configurable players, rules, and simulations
-- 📊 Outputs a rich, Pandas-ready CSV log file
-- ⚡ Handles millions of hands efficiently with buffered logging
-- 🧪 Supports forced cards, custom config per player
-- ✅ CLI-ready & API-compatible design
-- 🗜 Optional gzip log support (outputs as `.csv.gz`)
-- 📊 Optional progress bar in the console (enabled with `-progress` flag)
+- ✅ **New: Surrender Rule Support** (configurable for early surrender and against dealer's Ace).
+- ✅ **New: Table Bet Limits** (configurable `min_bet` and `max_bet` for the table, including derived limits for sidebets).
+- 🧠 Strategy files loaded dynamically via JSON (no recompile!).
+- 📈 Card Counting with Deviations (illustrious 18, etc.) and multiple count systems.
+- 🎯 Bet ramping with true count multipliers.
+- 💼 Supports perfect pair & 21+3 sidebets.
+- 📦 JSON-configurable players, rules, and simulations.
+- 📊 Outputs a rich, Pandas-ready CSV log file.
+- 🧪 Supports forced cards for debugging and scenario testing.
+- 🗜 Optional gzip log support (outputs as `.csv.gz`).
+- 📊 Optional progress bar in the console.
 
 ---
 
@@ -40,7 +39,7 @@ go run main.go -config=test_config.json -log=simjack_log.csv -strategies=strateg
 ### 🔧 Optional Parameters
 
 - `-progress` : Displays a progress bar in the console during simulation  
-- `gzip_log`  : If set to `true` in the config file, log output will be written as a `.csv.gz` file
+- `-debug`  : Enable debug mode for round-level output
 ---
 
 ## ⚙️ Usage
